@@ -13,6 +13,15 @@ Run the top-level CodexResearchDesk workflow. Treat Codex app as the control sur
 
 Experiments are expensive information purchases. Before any GPU, training, pilot, or long-running experiment, produce a Decision Memo and pass the preflight gate.
 
+## Retrieval Discipline
+
+Use Codex app available retrieval rather than binding the workflow to one external search provider:
+
+- Inspect local project files and prior research-wiki notes first when they exist.
+- Use bundled ARIS literature skills/tools (`research-lit`, `arxiv`, `openalex`, `semantic-scholar`, `deepxiv`) for academic evidence.
+- Use web search only when the current Codex environment provides it and the claim is unfamiliar, time-sensitive, or cannot be checked locally.
+- If evidence cannot be verified, mark it as missing or low-confidence instead of smoothing over the gap.
+
 ## Workflow
 
 ### 1. Frame the Decision
@@ -84,4 +93,13 @@ Interpret results strictly:
 
 ## Output Standard
 
-Be direct, non-flattering, and decision-oriented. The final answer should name the verdict, the reason, the PDF path, and the next allowed action.
+Be direct, non-flattering, and decision-oriented. Correct wrong premises explicitly.
+
+Use Markdown deliberately:
+
+- Use `##` section headers for research outputs.
+- Bold key conclusions.
+- Use tables or lists for evidence, risk, budget, and verdict comparisons.
+- Separate facts, inference, and unknowns.
+
+The final answer should name the verdict, the reason, the PDF path, and the next allowed action.

@@ -13,6 +13,15 @@
 
 **Reason**: [short, direct reason]
 
+## Premise Check
+
+| Item | Assessment |
+|---|---|
+| User premise | [what the idea assumes or asks] |
+| Correction needed? | [yes/no + direct correction if any] |
+| Evidence status | [verified / partially verified / unverified] |
+| Retrieval used | [local wiki / ARIS literature tool / web search if available / none] |
+
 ## First-Principles Decomposition
 
 | Question | Answer |
@@ -103,7 +112,7 @@
 
 ## Self-Audit
 
-- **Topic fit**: [yes/no + note]
-- **Factual risk**: [known uncertainty]
-- **Logic closure**: [does evidence support verdict?]
+- **Topic fit**: [yes/no + note on whether the memo answers the user's actual question]
+- **Factual accuracy**: [checked facts, unverified facts, and likely error sources]
+- **Logic closure**: [whether evidence and assumptions support the verdict]
 - **Overclaim check**: [what was softened or rejected]

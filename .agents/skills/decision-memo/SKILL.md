@@ -43,14 +43,22 @@ Do not invent percentages. Use numeric probabilities only when the memo cites ex
 Include every section below:
 
 1. Executive decision.
-2. First-principles decomposition.
-3. Multi-perspective reasoning from PI/advisor, resource manager, and skeptical reviewer.
-4. Evidence ledger with supporting, opposing, adjacent, and missing evidence.
-5. Advantages, weaknesses/risks, and failure modes.
-6. Lowest-cost kill test.
-7. Resource budget.
-8. Final gate JSON block.
-9. Self-audit.
+2. Premise check, including direct correction when the user premise is wrong or underspecified.
+3. First-principles decomposition.
+4. Multi-perspective reasoning from PI/advisor, resource manager, and skeptical reviewer.
+5. Evidence ledger with supporting, opposing, adjacent, and missing evidence.
+6. Advantages, weaknesses/risks, and failure modes.
+7. Lowest-cost kill test.
+8. Resource budget.
+9. Final gate JSON block.
+10. Self-audit covering topic fit, factual accuracy, and logic closure.
+
+## Evidence and Formatting Discipline
+
+- Use Codex app available retrieval and bundled ARIS tools for unfamiliar or time-sensitive claims. Do not require Google Search specifically.
+- Mark unsupported claims as missing evidence or low-confidence inference.
+- Use `##` section headers, bold key conclusions, and tables/lists for evidence, risks, budgets, and comparisons.
+- Keep the verdict tied to the evidence ledger; do not let the memo become an idea list.
 
 ## JSON Contract
 

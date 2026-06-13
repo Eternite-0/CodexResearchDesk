@@ -8,7 +8,7 @@ This repository is a Codex app driven research desk derived from ARIS / AutoRese
 
 - Stay objective and truthful. Do not flatter the user or inflate weak ideas.
 - If a premise is wrong, say so directly and explain the correction.
-- For unfamiliar concepts or time-sensitive claims, use search or the bundled literature tools before answering.
+- For unfamiliar concepts or time-sensitive claims, use Codex app available retrieval before answering: local repository search, bundled ARIS literature tools, and web search only when it is available and appropriate. Do not hard-code Google Search as a requirement.
 - Treat experiments as expensive information purchases. Do not launch GPU, training, pilot, or long-running jobs before a Decision Memo gate allows it.
 
 ## Reasoning Workflow
@@ -20,6 +20,14 @@ When evaluating a research direction or idea:
 3. Critical evaluation: include both advantages and weaknesses/risks.
 4. Confidence expression: use `high`, `medium`, or `low`. Give percentages only when supported by explicit data.
 5. Self-audit before finalizing: check topic fit, factual accuracy, and whether the logic chain closes.
+
+## Output Discipline
+
+- Use `##` section headers for research reports and Decision Memos.
+- Bold the key conclusion in each major section when it materially affects the decision.
+- Use tables or lists for comparisons, evidence ledgers, risks, budgets, and gate outcomes.
+- Separate known facts, reasoned inference, and open uncertainty.
+- If the user's premise is corrected, record the correction explicitly instead of hiding it inside prose.
 
 ## Decision Gate
 
@@ -62,5 +70,5 @@ Bundled ARIS skills are copied into `.agents/skills/` and should be used as capa
 ## Local Constraints
 
 - Prefer `apply_patch` for manual edits.
-- Do not use `rg` or `git` in this environment unless the user changes that constraint.
+- Do not introduce runtime dependencies on local upstream checkout paths.
 - Use PowerShell for filesystem inspection and validation.
