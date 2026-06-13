@@ -47,19 +47,9 @@ Seed Scan
 → Decision Memo only before expensive work
 ```
 
-```mermaid
-flowchart TD
-    A["论文 / 仓库 / 外部信号 / 领域痛点"] --> B["Seed Scan"]
-    B --> P["Evidence Packets"]
-    P --> C["Idea Cards"]
-    C --> D["Evidence Probe"]
-    D --> E{"Promote / Narrow / Drop"}
-    E -->|promote| F["Direction Brief / Pitfall / Kill Tests"]
-    E -->|static_precheck| G["外部信号 / 论文代码追踪 / 静态补证"]
-    E -->|narrow or drop| H["暂缓或收窄"]
-    F --> I["Decision Memo only before expensive work"]
-    I --> J{"Decision Gate"}
-```
+<p align="center">
+  <img src="./assets/workflow.png" alt="CodexResearchDesk 产 Idea 工作流" width="960" />
+</p>
 
 各步的作用：
 
