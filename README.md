@@ -1,18 +1,19 @@
 <div align="center">
-  <img src="./assets/codex-color.svg" width="88" alt="Codex icon" />
+  <img src="./assets/codex-color.svg" width="92" alt="Codex icon" />
 
   <h1>CodexResearchDesk</h1>
 
   <p>
-    <strong>A Codex app first research decision desk built on curated ARIS / AutoResearch capabilities.</strong>
+    <strong>面向科研决策的 Codex App 智能工作台</strong>
   </p>
 
   <p>
-    Turn research ideas into evidence-backed <em>go / no-go</em> decisions before burning GPU time.
+    以 Codex App 为控制中枢，以 ARIS / AutoResearch 为能力引擎，
+    在消耗算力之前，将研究想法压缩成可审查、可证伪、可决策的证据备忘录。
   </p>
 
   <p>
-    <a href="https://github.com/Eternite-0/CodexResearchDesk"><img alt="Repo" src="https://img.shields.io/badge/GitHub-CodexResearchDesk-181717?logo=github"></a>
+    <a href="https://github.com/Eternite-0/CodexResearchDesk"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-CodexResearchDesk-181717?logo=github"></a>
     <img alt="License" src="https://img.shields.io/badge/license-MIT-10b981">
     <img alt="Codex App" src="https://img.shields.io/badge/Codex%20App-ready-111827">
     <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
@@ -21,54 +22,58 @@
 
 ---
 
-## Why
+## 项目愿景
 
-AutoResearch / ARIS is powerful, but full autonomous research pipelines can become too large when the immediate problem is simpler:
+科研系统真正稀缺的不是 idea，而是 **在不确定性极高、资源极有限的条件下，判断一个 idea 是否值得下注的能力**。
 
-> **Should this idea consume scarce research resources yet?**
+AutoResearch / ARIS 已经提供了非常完整的科研自动化能力：文献检索、查新、审稿、wiki 记忆、实验桥接、论文审计、PDF 输出。但对于很多真实场景来说，最先需要解决的问题不是“如何自动跑完整流水线”，而是：
 
-CodexResearchDesk keeps the useful ARIS engine pieces, such as literature tools, review skills, research wiki, experiment bridge, and PDF rendering. It changes the top-level control logic: **Codex app drives a first-principles decision desk before experiments are allowed.**
+> **这个研究想法，现在是否值得消耗我的时间、GPU、API 额度和导师信任？**
 
-The default artifact is not a loose idea list. It is a Decision Memo that answers:
+CodexResearchDesk 的定位就是这个前置决策层。它不试图替代 AutoResearch，而是将其能力重新组织为一个 Codex App 驱动的研究决策工作台：先论证，再实验；先证伪，再扩张；先形成可交付的 Decision Memo，再进入昂贵阶段。
 
-- What is the core claim?
-- What must be true for the idea to work?
-- What evidence supports it?
-- What evidence weakens it?
-- What is the cheapest kill test?
-- Is GPU/training work allowed now?
+## 核心理念
 
-## Core Idea
+CodexResearchDesk 将一次科研推进拆成三个层次：
+
+1. **决策层**：由 Codex App 驱动，负责追问、拆解、审查、裁决。
+2. **证据层**：调用 ARIS / AutoResearch 的精选 skills 与工具，完成文献、查新、审稿、wiki、实验规划等工作。
+3. **执行层**：只有在 Decision Gate 放行后，才允许进入实验桥接、训练、GPU 任务或长时间运行流程。
+
+换句话说，Codex App 不是单独科研的“大脑幻觉机”，而是研究控制台；ARIS Core 不是失控的自动流水线，而是受控调用的能力引擎。
+
+## 系统架构
 
 ```mermaid
 flowchart LR
-    A["Research direction"] --> B["Codex app control desk"]
-    B --> C["First-principles decomposition"]
-    C --> D["ARIS evidence tools"]
+    A["研究方向 / 初始想法"] --> B["Codex App 研究控制台"]
+    B --> C["第一性原理拆解"]
+    C --> D["ARIS Core 证据工具"]
     D --> E["Decision Memo"]
-    E --> F{"Gate verdict"}
-    F -->|GO| G["Experiment bridge / run experiment"]
-    F -->|STATIC_ONLY| H["Literature, public checkpoints, static probes"]
-    F -->|NEEDS_MORE_EVIDENCE / NO_GO| I["Blocked"]
+    E --> F{"Decision Gate"}
+    F -->|GO| G["Experiment Bridge / Run Experiment"]
+    F -->|STATIC_ONLY| H["文献补证 / 公开模型 / 静态验证"]
+    F -->|NEEDS_MORE_EVIDENCE / NO_GO| I["阻断实验"]
 ```
 
-## What This Project Is
+## 为什么不是又一个自动科研流水线
 
-- A lightweight project meant to be opened directly in **Codex app**.
-- A decision layer over selected ARIS / AutoResearch capabilities.
-- A system for producing advisor-ready Decision Memos in Markdown and PDF.
-- A hard preflight gate for experiments, pilots, GPU jobs, and long-running training tasks.
+传统自动科研流水线容易把“生成更多 idea”和“启动更多实验”当成进展。但在资源紧张的情况下，错误实验比没有实验更危险：它会消耗算力、污染判断、制造伪进展，还可能让后续写作建立在脆弱假设上。
 
-## What This Project Is Not
+CodexResearchDesk 的默认动作不是启动实验，而是生成一份 **Decision Memo**。它必须回答：
 
-- It is not a full clone of every AutoResearch workflow.
-- It is not a visual dashboard in v0.1.
-- It is not a GPU experiment launcher by default.
-- It does not depend on a local upstream AutoResearch checkout at runtime.
+- 核心 claim 到底是什么？
+- 这个 claim 成立需要哪些必要条件？
+- 当前证据中，哪些是支持证据，哪些只是相邻证据？
+- 最强反对理由是什么？
+- 最低成本的 kill test 是什么？
+- 现在是否允许进入训练、GPU 或长任务？
 
-## Project-Isolated Outputs
+如果这些问题答不清楚，系统会阻断实验，而不是鼓励“先跑一下看看”。
 
-Every research project gets its own workspace:
+## Decision Memo
+
+每个研究想法都会被整理成面向导师、合作者和未来自己的决策备忘录：
 
 ```text
 projects/<project-slug>/
@@ -80,49 +85,103 @@ projects/<project-slug>/
   tmp/pdfs/
 ```
 
-This prevents multiple literature reviews, ideas, PDFs, previews, and wiki memories from sharing a flat namespace.
+其中：
 
-Example:
+- `DECISION_MEMO.md` 是可审阅的完整推理过程。
+- `decision.json` 是机器可读的 gate 状态。
+- `output/pdf/` 存放正式 PDF，适合发给导师或组会讨论。
+- `research-wiki/` 保存该项目自己的长期记忆，避免多个课题互相污染。
 
-```text
-projects/sae-moe-interpretability/
-  decisions/sae-moe-routing-saes/
-    DECISION_MEMO.md
-    decision.json
-  output/pdf/sae-moe-routing-saes_decision_memo.pdf
+这种项目级隔离可以防止多个调研方向共享一个扁平 `output/pdf/` 或 `research-wiki/`，从源头减少状态混杂。
+
+## 决策门
+
+| Verdict | 含义 | 是否允许实验 |
+|---|---|---|
+| `GO` | 证据足够强，可以进入实验。 | 允许 |
+| `STATIC_ONLY` | 想法有潜力，但必须先做低成本静态验证。 | 阻断训练 |
+| `NEEDS_MORE_EVIDENCE` | 关键证据缺失，需要继续调研或补证。 | 阻断 |
+| `NO_GO` | 当前不值得推进。 | 阻断 |
+| `USER_OVERRIDE` | 用户明确接受风险并记录理由。 | 需显式 override |
+
+实验前检查：
+
+```powershell
+python .\tools\decision_gate.py latest .\projects\<project-slug> --mode experiment
 ```
 
-## Verdicts
+静态工作检查：
 
-| Verdict | Meaning | Experiment access |
-|---|---|---|
-| `GO` | Evidence is strong enough to proceed. | Allowed |
-| `STATIC_ONLY` | The idea is plausible but needs cheap non-training evidence first. | Blocked |
-| `NEEDS_MORE_EVIDENCE` | Key evidence is missing. | Blocked |
-| `NO_GO` | The idea should not be pursued now. | Blocked |
-| `USER_OVERRIDE` | The user explicitly accepts recorded risk. | Allowed only with override |
+```powershell
+python .\tools\decision_gate.py latest .\projects\<project-slug> --mode static
+```
 
-## Quick Start
+## Codex Skills
 
-Open this repository in Codex app, then install local Python dependencies:
+Codex App 会自动从以下目录发现仓库级 skills：
+
+```text
+.agents/skills/
+```
+
+### Desk Layer
+
+| Skill | 作用 |
+|---|---|
+| `$research-desk` | 顶层研究决策入口，负责第一性原理拆解与流程调度。 |
+| `$decision-memo` | 生成正式 Decision Memo、PDF 与 gate JSON。 |
+| `$preflight-gate` | 在实验、pilot、GPU 任务前执行硬阻断检查。 |
+| `$aris-runner` | 将具体任务路由到内置 ARIS Core 能力。 |
+
+### ARIS Core
+
+| 类型 | Skills |
+|---|---|
+| 文献与检索 | `research-lit`, `arxiv`, `openalex`, `semantic-scholar`, `deepxiv` |
+| 查新与审查 | `novelty-check`, `research-review`, `kill-argument` |
+| 长期记忆 | `research-wiki`, `wiki-enrich` |
+| 实验与结果 | `experiment-plan`, `experiment-bridge`, `run-experiment`, `monitor-experiment`, `result-to-claim` |
+| 写作与审计 | `citation-audit`, `paper-claim-audit`, `paper-plan` |
+
+这些能力是研究引擎，不是顶层控制流。默认先进入 `$research-desk`，只有 gate 通过后才进入实验类 skills。
+
+## 内置工具
+
+| 工具 | 作用 |
+|---|---|
+| `tools/decision_gate.py` | 机械执行 go / no-go 检查。 |
+| `tools/render_markdown_pdf.py` | 中文友好的 Markdown 到 PDF 渲染。 |
+| `tools/research_wiki.py` | 项目级研究记忆管理。 |
+| `tools/aris_tool_resolver.py` | 解析本地 ARIS skill / tool 路径。 |
+| `tools/arxiv_fetch.py` | arXiv 检索与下载辅助。 |
+| `tools/openalex_fetch.py` | OpenAlex 学术图谱检索。 |
+| `tools/semantic_scholar_fetch.py` | Semantic Scholar 检索辅助。 |
+| `tools/threat_scan.py` | 对会重新进入 agent 上下文的 wiki 内容做注入风险扫描。 |
+| `tools/self_check.py` | 检查仓库可移植性、依赖、skills 和路径泄漏。 |
+
+## 快速开始
+
+克隆仓库后，用 Codex App 打开项目根目录。
+
+安装依赖：
 
 ```powershell
 python -m pip install -r requirements.txt
 ```
 
-Run the self-check:
+运行自检：
 
 ```powershell
 python .\tools\self_check.py
 ```
 
-Evaluate a research idea in Codex app:
+在 Codex App 中评估一个研究想法：
 
 ```text
 Use $research-desk to evaluate whether SAE features can explain MoE expert routing before any GPU experiment.
 ```
 
-Render a Decision Memo PDF:
+渲染 Decision Memo PDF：
 
 ```powershell
 python .\tools\render_markdown_pdf.py `
@@ -132,88 +191,42 @@ python .\tools\render_markdown_pdf.py `
   --preview-dir .\projects\<project-slug>\tmp\pdfs
 ```
 
-Check whether experiments are allowed:
+## 示例
 
-```powershell
-python .\tools\decision_gate.py latest .\projects\<project-slug> --mode experiment
-```
-
-Check whether static work is allowed:
-
-```powershell
-python .\tools\decision_gate.py latest .\projects\<project-slug> --mode static
-```
-
-## Bundled Skills
-
-Codex discovers repo-level skills from:
-
-```text
-.agents/skills/
-```
-
-Desk layer:
-
-- `$research-desk`: top-level Codex app driven decision workflow.
-- `$decision-memo`: writes formal Decision Memos and gate JSON.
-- `$preflight-gate`: enforces experiment blocking.
-- `$aris-runner`: routes tasks to bundled ARIS capabilities.
-
-Curated ARIS core:
-
-- Literature: `research-lit`, `arxiv`, `openalex`, `semantic-scholar`, `deepxiv`
-- Review: `novelty-check`, `research-review`, `kill-argument`
-- Memory: `research-wiki`, `wiki-enrich`
-- Experiments: `experiment-plan`, `experiment-bridge`, `run-experiment`, `monitor-experiment`, `result-to-claim`
-- Writing/audit: `citation-audit`, `paper-claim-audit`, `paper-plan`
-
-## Bundled Tools
-
-| Tool | Purpose |
-|---|---|
-| `tools/decision_gate.py` | Mechanical go/no-go enforcement |
-| `tools/render_markdown_pdf.py` | Chinese-friendly Markdown to PDF rendering |
-| `tools/research_wiki.py` | Persistent research memory |
-| `tools/aris_tool_resolver.py` | Local ARIS skill/tool path resolution |
-| `tools/arxiv_fetch.py` | arXiv search/download helper |
-| `tools/openalex_fetch.py` | OpenAlex search helper |
-| `tools/semantic_scholar_fetch.py` | Semantic Scholar helper |
-| `tools/threat_scan.py` | Best-effort prompt-injection screening for wiki content |
-| `tools/self_check.py` | Repository portability check |
-
-## Sample Decision
-
-This repository includes a sample SAE/MoE preflight decision:
+仓库内置了一个 SAE / MoE interpretability 的样例决策：
 
 ```powershell
 python .\tools\decision_gate.py latest .\projects\sae-moe-interpretability --mode experiment
 ```
 
-Expected result:
+预期结果：
 
 ```text
 BLOCK: STATIC_ONLY - STATIC_ONLY blocks experiment work
 ```
 
-Static analysis is still allowed:
+这意味着：当前 idea 允许继续文献补证、公开 checkpoint 分析和静态验证，但不允许直接启动训练或 GPU pilot。
+
+静态验证检查：
 
 ```powershell
 python .\tools\decision_gate.py latest .\projects\sae-moe-interpretability --mode static
 ```
 
-## Design Principles
+## 设计原则
 
-- **Truth before momentum**: a weak premise should be rejected early.
-- **Experiments buy information**: do not run work that cannot change a decision.
-- **First principles first**: define the claim, assumptions, and falsifier before searching for supporting evidence.
-- **Evidence is typed**: supporting, opposing, adjacent, and missing evidence are different things.
-- **PDF is the human handoff**: advisor-facing outputs should be readable without opening a code editor.
+- **真实优先于动量**：前提错了就直接指出，弱 idea 不应被漂亮话包装。
+- **实验是购买信息**：不能改变决策的实验，不值得运行。
+- **第一性原理优先**：先定义 claim、必要条件与 falsifier，再寻找证据。
+- **证据必须分型**：支持证据、反对证据、相邻证据、缺失证据不能混写。
+- **负结果也有价值**：能低成本杀死一个坏 idea，本身就是节省资源。
+- **PDF 是正式交付物**：给导师、合作者或组会看的内容，不应只停留在 Markdown。
 
-## Open Source Notice
+## 开源说明
 
-This project includes a curated subset of skills and tools derived from [wanshuiyin/Auto-claude-code-research-in-sleep](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep), licensed under MIT. See [NOTICE](./NOTICE) and [vendor/ARIS_LICENSE](./vendor/ARIS_LICENSE).
+CodexResearchDesk 包含一组精选的 ARIS / AutoResearch skills 与工具，派生自 [wanshuiyin/Auto-claude-code-research-in-sleep](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep)，遵循 MIT License。详见 [NOTICE](./NOTICE) 与 [vendor/ARIS_LICENSE](./vendor/ARIS_LICENSE)。
 
-The Codex icon in this README is sourced from [LobeHub Icons / Dashboard Icons](https://dashboardicons.com/icons/external/codex-color), also distributed under MIT-compatible open icon infrastructure. This project is not affiliated with, endorsed by, or sponsored by OpenAI.
+README 中的 Codex 图标来自 [LobeHub Icons / Dashboard Icons](https://dashboardicons.com/icons/external/codex-color)。本项目不是 OpenAI 官方项目，也不代表 OpenAI 背书或赞助。
 
 ## License
 
