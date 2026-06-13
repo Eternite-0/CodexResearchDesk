@@ -1,6 +1,6 @@
 ---
 name: research-desk
-description: "Codex app driven research workflow for generating, refining, and evaluating research ideas before experiments. Use when the user wants valuable idea directions, paper/repo-driven idea discovery, first-principles analysis, pitfall avoidance, pre-experiment reasoning, go/no-go decisions, advisor-facing research judgment, or ARIS tool routing without launching experiments."
+description: "Codex app driven research workflow for generating, refining, and evaluating research ideas before experiments. Use when the user wants valuable idea directions, paper/repo-driven idea discovery, first-principles analysis, pitfall avoidance, pre-experiment reasoning, go/no-go decisions, advisor-facing Chinese research briefs or Idea Sprints, or ARIS tool routing without launching experiments."
 ---
 
 # Research Desk
@@ -157,21 +157,34 @@ These artifacts help decide what not to do and what to validate first. They do n
 
 ### 4. Produce Idea Cards Before Formal Artifacts
 
-When producing ideas, use this card format before any full Decision Memo:
+When producing ideas, keep cards complete but readable. For Chinese Idea Sprint artifacts, do not render every card as a large two-column field table. Use short labeled paragraphs so a human can read the brief from top to bottom:
 
-| Field | Required content |
-|---|---|
-| idea | concrete idea title, not a slogan |
-| core claim | one falsifiable claim |
-| seed evidence | papers/repos/signals that motivated it |
-| why not A+B | the non-trivial mechanism, problem reframing, or evaluation angle |
-| avoided pitfall | the known failure mode it tries to dodge |
-| hidden pitfall | the most likely reason it still fails |
-| traceability | code/data/metric/baseline availability |
-| kill test | a 0-GPU or lowest-cost check |
-| action | `promote`, `static_precheck`, `narrow`, or `drop` |
+- Title: concrete idea title, not a slogan.
+- One-line takeaway: explain the idea in plain language.
+- Core claim: one falsifiable claim.
+- Seed evidence: cite evidence packets, papers, repos, signals, or failure experience.
+- Mechanism / insight: state the mechanism or problem reframing, not a method pile.
+- Why not A+B: explain why it is not a direct paper-A-plus-paper-B splice.
+- Avoided pitfall: name the known failure mode it tries to dodge.
+- Hidden pitfall: name the most likely reason it still fails.
+- Traceability: name available code, data, metrics, baselines, or missing links.
+- Falsifier: say what observation would stop or narrow it.
+- Lowest-cost kill test: a 0-GPU or lowest-cost check.
+- Action: `promote`, `static_precheck`, `narrow`, or `drop`.
 
 Promote only the top one to three candidates into deeper triage. Park the rest with explicit reasons instead of expanding every candidate.
+
+### 4.1 Chinese Idea Sprint Style
+
+For Chinese Idea Sprint artifacts, use `templates/IDEA_SPRINT_TEMPLATE.md` as a style guide and apply these constraints:
+
+- Write the artifact in Chinese by default when the user writes Chinese or the project is Chinese-facing.
+- Keep English only for stable identifiers: paper titles, dataset names, model names, repo names, code paths, metric names, JSON keys, and action enum values.
+- Lead with the conclusion first. The first page should answer: worth doing or not, top 1-3 directions, and the next kill test.
+- Prefer narrative sections over dense tables. Use at most a few compact tables for evidence index or ranking; do not put all idea-card fields into a giant table.
+- Explain "why not continue the obvious path" in plain Chinese, e.g. why not chase a benchmark leaderboard or build another agent.
+- End with one concrete next static step. Do not end with a broad menu if the evidence already identifies the next useful action.
+- Before rendering or delivery, invoke or follow `report-style-auditor` to remove English boilerplate, template residue, vague authority, and chatbot tone.
 
 ### 5. Build Evidence With ARIS Core
 
@@ -211,7 +224,14 @@ python .\tools\check_report_style.py .\projects\<project-slug>\decisions\<idea-s
 python .\tools\check_ai_style.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md
 ```
 
-When writing an Idea Sprint artifact to disk, render a review PDF too:
+When writing a Chinese Idea Sprint artifact to disk, invoke or follow `report-style-auditor`, then run:
+
+```powershell
+python .\tools\check_report_style.py .\projects\<project-slug>\idea-sprints\<sprint-slug>\IDEA_SPRINT.md
+python .\tools\check_ai_style.py .\projects\<project-slug>\idea-sprints\<sprint-slug>\IDEA_SPRINT.md
+```
+
+Then render a review PDF:
 
 ```powershell
 python .\tools\render_markdown_pdf.py .\projects\<project-slug>\idea-sprints\<sprint-slug>\IDEA_SPRINT.md --output .\projects\<project-slug>\output\pdf\<sprint-slug>_idea_sprint.pdf --preview --preview-dir .\projects\<project-slug>\tmp\pdfs
