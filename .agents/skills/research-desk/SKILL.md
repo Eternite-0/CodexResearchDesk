@@ -52,8 +52,9 @@ For early directions that are not ready for a full Decision Memo, use the v0.2 t
 
 1. `direction-brief` to frame the one-sentence direction, core claim, evidence needs, risks, and preliminary verdict.
 2. `pitfall-radar` to identify data, metric, baseline, novelty, engineering, evaluation, and contribution traps.
-3. `direction-scorecard` to score novelty, feasibility, data access, compute control, evaluation clarity, baseline reproducibility, and project value.
-4. `kill-test-generator` to define at least three low-cost tests before experiments.
+3. `external-signal-scout` to collect external soft-gate signals from GitHub, alphaXiv/HF Papers, Hacker News, Semantic Scholar/OpenAlex, and manual X/Reddit/enterprise evidence.
+4. `direction-scorecard` to score novelty, feasibility, data access, compute control, evaluation clarity, baseline reproducibility, and project value, using external signals as risk evidence rather than hard truth.
+5. `kill-test-generator` to define at least three low-cost tests before experiments.
 
 These artifacts help decide what not to do and what to validate first. They do not authorize GPU, training, pilots, or long-running jobs.
 
@@ -75,6 +76,8 @@ Invoke or follow `decision-memo`. Write all project artifacts under `projects/<p
 
 - `projects/<project-slug>/decisions/<idea-slug>/DECISION_MEMO.md`
 - `projects/<project-slug>/decisions/<idea-slug>/decision.json`
+- `projects/<project-slug>/signals/<idea-slug>/EXTERNAL_SIGNAL_LEDGER.md` when external signal scouting was used
+- `projects/<project-slug>/signals/<idea-slug>/external_signals.json` when external signal scouting was used
 - `projects/<project-slug>/output/pdf/<idea-slug>_decision_memo.pdf`
 - `projects/<project-slug>/research-wiki/`
 - `projects/<project-slug>/tmp/pdfs/`

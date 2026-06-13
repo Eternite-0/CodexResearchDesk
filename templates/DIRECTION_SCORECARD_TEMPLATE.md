@@ -9,7 +9,8 @@
 ## 评分表
 
 评分口径：1 = 很弱或阻塞，2 = 脆弱，3 = 可做但缺口明显，4 = 适合低成本验证，5 = 证据直接且条件成熟。  
-总分计算：`round(sum(scores) / 35 * 100)`。
+总分计算：`round(sum(scores) / 35 * 100)`。  
+外部信号只作为风险证据和优先级提示，不直接进入总分，避免被热度绑架。
 
 | 维度 | 分数 1-5 | 理由 | 主要证据或缺口 |
 |---|---:|---|---|
@@ -20,6 +21,18 @@
 | Evaluation clarity | [1-5] | [说明] | [证据或缺口] |
 | Baseline reproducibility | [1-5] | [说明] | [证据或缺口] |
 | Publication / project value | [1-5] | [说明] | [证据或缺口] |
+
+## 外部信号与坑位证据
+
+| 项目 | 判断 |
+|---|---|
+| external_signal_score | [0-100；来自 `projects/<project-slug>/signals/<direction-slug>/external_signals.json`，没有则写“未使用”] |
+| hype_risk | [low / medium / high；热度高但缺 benchmark/trace 时提高] |
+| 工程健康 | [GitHub 维护、license、CI、release、issue 等信号] |
+| 社区与论文热度 | [alphaXiv / HF Papers / HN / 手工 X/Reddit 信号] |
+| 企业或机构采用 | [Microsoft/HF/企业采用/产品集成/benchmark 组织等信号] |
+| 坑位假设 | [外部信号暴露的风险，例如无指标、赛道拥挤、工程不可复现、只有 hype] |
+| A+B 检查 | [说明为什么这个 idea 不是简单拼接两个流行方向；如果不能说明，降级为补证或停止理由] |
 
 ## 继续理由
 

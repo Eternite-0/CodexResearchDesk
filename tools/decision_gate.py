@@ -162,6 +162,12 @@ def validate_decision(data: dict[str, Any]) -> list[str]:
         errors.append("main_claim must be a string")
     if "next_review_condition" in data and not isinstance(data["next_review_condition"], str):
         errors.append("next_review_condition must be a string")
+    if "external_signal_summary" in data and not isinstance(data["external_signal_summary"], str):
+        errors.append("external_signal_summary must be a string")
+    if "external_signal_ledger" in data and not isinstance(data["external_signal_ledger"], str):
+        errors.append("external_signal_ledger must be a string")
+    if "hype_risk" in data and data["hype_risk"] not in ALLOWED_RISK_LEVELS:
+        errors.append("hype_risk must be one of low, medium, high")
     if "risk_level" in data and data["risk_level"] not in ALLOWED_RISK_LEVELS:
         errors.append("risk_level must be one of low, medium, high")
     if "direction_score" in data:
@@ -171,6 +177,13 @@ def validate_decision(data: dict[str, Any]) -> list[str]:
                 errors.append("direction_score must be between 0 and 100")
         except (TypeError, ValueError):
             errors.append("direction_score must be numeric")
+    if "external_signal_score" in data:
+        try:
+            score = float(data["external_signal_score"])
+            if score < 0 or score > 100:
+                errors.append("external_signal_score must be between 0 and 100")
+        except (TypeError, ValueError):
+            errors.append("external_signal_score must be numeric")
     if "max_gpu_hours_allowed" in data:
         try:
             max_gpu_hours = float(data["max_gpu_hours_allowed"])

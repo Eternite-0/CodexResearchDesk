@@ -51,7 +51,8 @@ flowchart LR
     A["研究方向 / 初始想法"] --> B["Codex App 研究控制台"]
     B --> C["Direction Brief"]
     C --> D["Pitfall Radar"]
-    D --> E["Direction Scorecard"]
+    D --> S["External Signal Scout"]
+    S --> E["Direction Scorecard"]
     E --> F["Kill Tests"]
     F --> G["Decision Memo"]
     G --> H{"Decision Gate"}
@@ -85,6 +86,7 @@ v0.2 的默认工作流是：
 Idea
 → Direction Brief
 → Pitfall Radar
+→ External Signal Scout
 → Direction Scorecard
 → Kill Tests
 → Decision Memo
@@ -97,6 +99,7 @@ Idea
 |---|---|---:|
 | Direction Brief | 用 1-2 页说明方向、核心 claim、证据需求、Top 3 risks 和初步 verdict。 | 0 GPU |
 | Pitfall Radar | 预判 data、metric、baseline、novelty、engineering、evaluation、paper/contribution 坑。 | 0 GPU |
+| External Signal Scout | 抓取 GitHub、alphaXiv/HF Papers、HN、Semantic Scholar/OpenAlex 与手工社媒/企业信号，用外部软门控暴露坑位。 | 0 GPU |
 | Direction Scorecard | 用 7 个维度 1-5 分打分，输出 total score /100、risk_level 和 recommended verdict。 | 0 GPU |
 | Kill Tests | 设计至少 3 个低成本测试，其中至少 1 个能快速否定或收窄方向。 | 默认 0 GPU |
 | Decision Memo | 在方向值得正式裁决时，形成导师可审阅的证据备忘录和 gate JSON。 | 视 verdict 而定 |
@@ -112,6 +115,9 @@ projects/<project-slug>/
   decisions/<idea-slug>/
     DECISION_MEMO.md
     decision.json
+  signals/<idea-slug>/
+    EXTERNAL_SIGNAL_LEDGER.md
+    external_signals.json
   research-wiki/
   output/pdf/
   tmp/pdfs/
@@ -121,6 +127,7 @@ projects/<project-slug>/
 
 - `DECISION_MEMO.md` 是可审阅的完整推理过程。
 - `decision.json` 是机器可读的 gate 状态。
+- `signals/` 保存外部软门控账本，用来记录工程、社区、企业和 benchmark 信号。
 - `output/pdf/` 存放正式 PDF，适合发给导师或组会讨论。
 - `research-wiki/` 保存该项目自己的长期记忆，避免多个课题互相污染。
 
@@ -163,6 +170,7 @@ Codex App 会自动从以下目录发现仓库级 skills：
 | `$research-desk` | 顶层研究决策入口，负责第一性原理拆解与流程调度。 |
 | `$direction-brief` | 快速生成 1-2 页方向简报。 |
 | `$pitfall-radar` | 在早期识别数据、指标、基线、新意、工程、评估和贡献风险。 |
+| `$external-signal-scout` | 用公开外部信号暴露 idea 坑位，避免只凭论文叙事或 A+B 组合推进。 |
 | `$direction-scorecard` | 对方向按 7 个维度评分并给出推荐 verdict。 |
 | `$kill-test-generator` | 生成低成本 kill tests，优先找能否定方向的检查。 |
 | `$decision-memo` | 生成正式 Decision Memo、PDF 与 gate JSON。 |
@@ -187,6 +195,7 @@ Codex App 会自动从以下目录发现仓库级 skills：
 | 工具 | 作用 |
 |---|---|
 | `tools/decision_gate.py` | 机械执行 go / no-go 检查。 |
+| `tools/external_signal_fetch.py` | 抓取外部软门控信号并生成项目级 External Signal Ledger。 |
 | `tools/render_markdown_pdf.py` | 中文友好的 Markdown 到 PDF 渲染。 |
 | `tools/research_wiki.py` | 项目级研究记忆管理。 |
 | `tools/aris_tool_resolver.py` | 解析本地 ARIS skill / tool 路径。 |
@@ -208,6 +217,10 @@ Codex App 会自动从以下目录发现仓库级 skills：
   "main_claim": "The core research claim.",
   "top_risks": ["risk 1", "risk 2", "risk 3"],
   "evidence_gaps": ["missing evidence"],
+  "external_signal_score": 42,
+  "external_signal_summary": "GitHub 有实现但缺少独立 benchmark，存在 hype 风险。",
+  "external_signal_ledger": "projects/demo/signals/idea/EXTERNAL_SIGNAL_LEDGER.md",
+  "hype_risk": "medium",
   "kill_tests": [],
   "allowed_next_actions": ["文献查新", "静态分析"],
   "blocked_actions": ["GPU 训练"],

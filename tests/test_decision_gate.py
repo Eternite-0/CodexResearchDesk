@@ -168,6 +168,37 @@ class DecisionGateTests(unittest.TestCase):
             self.assertTrue(result.allowed)
             self.assertEqual(result.data["kill_tests"][0]["decision_change_if_failed"], "NO_GO")
 
+    def test_external_signal_fields_are_soft_gate_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = write_decision(
+                Path(tmp),
+                "static-with-signals",
+                "STATIC_ONLY",
+                allowed_next_actions=["文献查新", "静态分析"],
+                external_signal_score=3,
+                external_signal_summary="外部信号弱，只影响下一步补证。",
+                external_signal_ledger="projects/test/signals/static-with-signals/EXTERNAL_SIGNAL_LEDGER.md",
+                hype_risk="high",
+            )
+            result = check_decision(path, mode="static")
+            self.assertTrue(result.allowed)
+            self.assertEqual(result.data["external_signal_score"], 3)
+
+    def test_external_signal_score_must_be_in_range(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = write_decision(
+                Path(tmp),
+                "bad-signal-score",
+                "STATIC_ONLY",
+                allowed_next_actions=["文献查新"],
+                external_signal_score=101,
+                hype_risk="medium",
+            )
+            result = check_decision(path, mode="static")
+            self.assertFalse(result.allowed)
+            self.assertEqual(result.verdict, "INVALID")
+            self.assertIn("external_signal_score", result.reason)
+
     def test_user_override_requires_flag_and_reason(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             path = write_decision(Path(tmp), "override", "USER_OVERRIDE", override_reason="user accepted risk")

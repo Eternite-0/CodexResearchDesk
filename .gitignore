@@ -10,10 +10,12 @@ env/
 # Generated research artifacts. These are project-local outputs and should not
 # be uploaded by default; force-add only intentional examples.
 projects/*/decisions/**
+projects/*/signals/**
 projects/*/research-wiki/**
 projects/*/output/**
 projects/*/tmp/**
 decisions/**
+signals/**
 research-wiki/**
 output/**
 tmp/**

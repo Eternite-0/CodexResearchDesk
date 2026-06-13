@@ -50,9 +50,11 @@ Every research idea that may consume experiment resources must have:
 
 - `projects/<project-slug>/decisions/<idea-slug>/DECISION_MEMO.md`
 - `projects/<project-slug>/decisions/<idea-slug>/decision.json`
+- `projects/<project-slug>/signals/<idea-slug>/EXTERNAL_SIGNAL_LEDGER.md` when external signal scouting is used
+- `projects/<project-slug>/signals/<idea-slug>/external_signals.json` when external signal scouting is used
 - `projects/<project-slug>/output/pdf/<idea-slug>_decision_memo.pdf`
 
-Each research project owns its own `decisions/`, `research-wiki/`, `output/pdf/`, and `tmp/pdfs/` directories. Do not write multi-project work into root-level `decisions/`, `research-wiki/`, `output/`, or `tmp/` directories.
+Each research project owns its own `decisions/`, `signals/`, `research-wiki/`, `output/pdf/`, and `tmp/pdfs/` directories. Do not write multi-project work into root-level `decisions/`, `signals/`, `research-wiki/`, `output/`, or `tmp/` directories.
 
 Allowed verdicts:
 

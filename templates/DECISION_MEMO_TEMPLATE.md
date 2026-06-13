@@ -68,6 +68,20 @@
 | 相邻 | [相关但不直接支持] | [高 / 中 / 低] | [说明] |
 | 缺失 | [未知或未核验] | [阻塞 / 非阻塞] | [说明] |
 
+## 外部信号账本
+
+**结论**：[外部信号只作为软门控；说明它如何影响优先级、风险和下一步，不直接决定 GO/NO_GO]
+
+| 项目 | 判断 |
+|---|---|
+| external_signal_score | [0-100；没有则写“未使用”] |
+| hype_risk | [low / medium / high] |
+| 账本路径 | `projects/[project-slug]/signals/[idea-slug]/EXTERNAL_SIGNAL_LEDGER.md` |
+| 工程信号 | [GitHub 维护、license、CI、release、issue、stars/forks 变化等] |
+| 社区信号 | [alphaXiv / HF Papers / HN / 手工 X/Reddit 信号] |
+| 企业或机构信号 | [企业、机构、产品、benchmark 或 leaderboard 采用] |
+| 暴露的坑 | [无指标、赛道拥挤、工程不可复现、只有 hype、A+B 风险等] |
+
 ## 批判性评估
 
 ### 优势
@@ -121,6 +135,10 @@
   "evidence_gaps": [
     "[证据缺口]"
   ],
+  "external_signal_score": 0,
+  "external_signal_summary": "[外部信号摘要；如果未使用外部信号账本，写“未使用”]",
+  "external_signal_ledger": "projects/[project-slug]/signals/[idea-slug]/EXTERNAL_SIGNAL_LEDGER.md",
+  "hype_risk": "[low | medium | high]",
   "kill_tests": [
     {
       "test_name": "[测试名]",

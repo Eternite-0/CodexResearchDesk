@@ -15,6 +15,8 @@ For project slug `<project-slug>` and idea slug `<idea-slug>`, write:
 
 - `projects/<project-slug>/decisions/<idea-slug>/DECISION_MEMO.md`
 - `projects/<project-slug>/decisions/<idea-slug>/decision.json`
+- `projects/<project-slug>/signals/<idea-slug>/EXTERNAL_SIGNAL_LEDGER.md` when external signal scouting was used
+- `projects/<project-slug>/signals/<idea-slug>/external_signals.json` when external signal scouting was used
 - `projects/<project-slug>/output/pdf/<idea-slug>_decision_memo.pdf`
 - `projects/<project-slug>/tmp/pdfs/`
 
@@ -85,6 +87,10 @@ Keep English only for stable identifiers: paper titles, model names, dataset nam
   "main_claim": "The core research claim being gated.",
   "top_risks": ["Novelty is not established."],
   "evidence_gaps": ["Closest prior work has not been checked."],
+  "external_signal_score": 0,
+  "external_signal_summary": "No external signal ledger was used.",
+  "external_signal_ledger": "",
+  "hype_risk": "low",
   "kill_tests": [
     {
       "test_name": "closest-prior-work check",
