@@ -1,0 +1,73 @@
+{
+  "idea_id": "vlm-explainable-open-set-anomaly",
+  "project_id": "vlm-open-set-anomaly-triage",
+  "title": "VLM-based explainable open-set anomaly detection",
+  "verdict": "STATIC_ONLY",
+  "confidence": "medium",
+  "direction_score": 57,
+  "risk_level": "high",
+  "main_claim": "VLM semantic priors can support explainable open-set anomaly detection only if explanation fidelity is independently testable under a non-leaking open-set protocol.",
+  "top_risks": [
+    "近期 VLM 工业异常检测工作可能已经覆盖核心 claim。",
+    "解释文本可能无法用公开数据进行忠实性验证。",
+    "开放集 split 和 baseline 协议可能不可比。"
+  ],
+  "evidence_gaps": [
+    "缺少 2024-2026 年 closest-prior-work overlap 表。",
+    "缺少解释忠实性指标与公开数据标注粒度审计。",
+    "缺少强 VLM/CLIP baseline 的复现可行性清单。"
+  ],
+  "kill_tests": [
+    {
+      "test_name": "最近工作重合检查",
+      "hypothesis": "核心 claim 尚未被近期 VLM 工业异常检测工作完整覆盖。",
+      "expected_cost": "4-6 小时，0 GPU",
+      "pass_condition": "没有工作同时覆盖开放集、解释忠实性和同类评估协议。",
+      "fail_condition": "至少 2-3 篇近期工作已经完整覆盖该 claim。",
+      "decision_change_if_failed": "改为 NO_GO，或仅保留更窄的评估协议方向。"
+    },
+    {
+      "test_name": "解释忠实性可评估性检查",
+      "hypothesis": "公开数据能支持解释是否对齐缺陷区域或属性的基本审计。",
+      "expected_cost": "2-3 小时，0 GPU",
+      "pass_condition": "至少一个数据集有可复核区域、类别或属性信号。",
+      "fail_condition": "只能主观阅读文本，无法形成可重复指标。",
+      "decision_change_if_failed": "改为 NEEDS_MORE_EVIDENCE。"
+    },
+    {
+      "test_name": "baseline 复现清单检查",
+      "hypothesis": "强 CLIP/VLM baseline 的评估协议可复现或可公平引用。",
+      "expected_cost": "3-4 小时，0 GPU",
+      "pass_condition": "找到至少 2 个可复核 baseline 和明确协议。",
+      "fail_condition": "baseline 缺代码、缺 split 或协议不可比。",
+      "decision_change_if_failed": "维持 STATIC_ONLY，禁止进入实验。"
+    }
+  ],
+  "resource_budget": {
+    "static_review_hours": 12,
+    "max_gpu_hours_allowed": 0
+  },
+  "max_gpu_hours_allowed": 0,
+  "allowed_next_actions": [
+    "文献查新",
+    "静态 benchmark protocol 复核",
+    "公开数据集 split 审计",
+    "非训练解释一致性探针"
+  ],
+  "blocked_actions": [
+    "GPU 训练",
+    "大规模标注",
+    "宣称 SOTA 或论文贡献已成立"
+  ],
+  "blocking_reasons": [
+    "novelty 和解释忠实性还没有被低成本证据支持。",
+    "当前阶段只能证明是否值得继续补证，不能证明方法有效。"
+  ],
+  "next_review_condition": "完成 closest-prior-work 表、解释指标审计和 baseline 复现清单后，再升级到 Decision Memo。",
+  "memo_md": "examples/vlm-explainable-open-set-anomaly/DIRECTION_BRIEF.md",
+  "memo_pdf": "examples/vlm-explainable-open-set-anomaly/not-rendered-for-example.pdf",
+  "source_materials": [
+    "Direction Triage example only; no experiment result is claimed."
+  ],
+  "created_at": "2026-06-13T08:00:00Z"
+}

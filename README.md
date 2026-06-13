@@ -4,12 +4,12 @@
   <h1>CodexResearchDesk</h1>
 
   <p>
-    <strong>面向科研决策的 Codex App 智能工作台</strong>
+    <strong>面向科研方向分诊的 Codex App 智能工作台</strong>
   </p>
 
   <p>
     以 Codex App 为控制中枢，以 ARIS / AutoResearch 为能力引擎，
-    在消耗算力之前，将研究想法压缩成可审查、可证伪、可决策的证据备忘录。
+    在消耗算力之前，帮助研究者判断什么不该做、先验证什么、何时才值得进入实验。
   </p>
 
   <p>
@@ -24,13 +24,15 @@
 
 ## 项目愿景
 
+CodexResearchDesk is a research direction triage desk. It helps researchers decide what not to do, what to validate first, and when an idea deserves expensive experiments.
+
 科研系统真正稀缺的不是 idea，而是 **在不确定性极高、资源极有限的条件下，判断一个 idea 是否值得下注的能力**。
 
 AutoResearch / ARIS 已经提供了非常完整的科研自动化能力：文献检索、查新、审稿、wiki 记忆、实验桥接、论文审计、PDF 输出。但对于很多真实场景来说，最先需要解决的问题不是“如何自动跑完整流水线”，而是：
 
 > **这个研究想法，现在是否值得消耗我的时间、GPU、API 额度和导师信任？**
 
-CodexResearchDesk 的定位就是这个前置决策层。它不试图替代 AutoResearch，而是将其能力重新组织为一个 Codex App 驱动的研究决策工作台：先论证，再实验；先证伪，再扩张；先形成可交付的 Decision Memo，再进入昂贵阶段。
+CodexResearchDesk v0.2 的定位就是这个前置分诊层。它不试图替代 AutoResearch，也不把自己扩张成完整 AutoResearch executor，而是将其能力重新组织为一个 Codex App 驱动的研究方向分诊工作台：先定方向，再查坑；先做低成本 kill tests，再决定是否写正式 Decision Memo；只有 gate 放行后才进入昂贵阶段。
 
 ## 核心理念
 
@@ -47,13 +49,17 @@ CodexResearchDesk 将一次科研推进拆成三个层次：
 ```mermaid
 flowchart LR
     A["研究方向 / 初始想法"] --> B["Codex App 研究控制台"]
-    B --> C["第一性原理拆解"]
-    C --> D["ARIS Core 证据工具"]
-    D --> E["Decision Memo"]
-    E --> F{"Decision Gate"}
-    F -->|GO| G["Experiment Bridge / Run Experiment"]
-    F -->|STATIC_ONLY| H["文献补证 / 公开模型 / 静态验证"]
-    F -->|NEEDS_MORE_EVIDENCE / NO_GO| I["阻断实验"]
+    B --> C["Direction Brief"]
+    C --> D["Pitfall Radar"]
+    D --> E["Direction Scorecard"]
+    E --> F["Kill Tests"]
+    F --> G["Decision Memo"]
+    G --> H{"Decision Gate"}
+    B -.必要时取证.-> I["ARIS Core 证据工具"]
+    I -.证据输入.-> G
+    H -->|GO| J["Experiment Bridge / Run Experiment"]
+    H -->|STATIC_ONLY| K["文献补证 / 公开模型 / 静态验证"]
+    H -->|NEEDS_MORE_EVIDENCE / NO_GO| L["阻断实验"]
 ```
 
 ## 为什么不是又一个自动科研流水线
@@ -70,6 +76,32 @@ CodexResearchDesk 的默认动作不是启动实验，而是生成一份 **Decis
 - 现在是否允许进入训练、GPU 或长任务？
 
 如果这些问题答不清楚，系统会阻断实验，而不是鼓励“先跑一下看看”。
+
+## v0.2 Direction Triage Mode
+
+v0.2 的默认工作流是：
+
+```text
+Idea
+→ Direction Brief
+→ Pitfall Radar
+→ Direction Scorecard
+→ Kill Tests
+→ Decision Memo
+→ Decision Gate
+```
+
+各 artifact 的作用：
+
+| Artifact | 作用 | 默认成本 |
+|---|---|---:|
+| Direction Brief | 用 1-2 页说明方向、核心 claim、证据需求、Top 3 risks 和初步 verdict。 | 0 GPU |
+| Pitfall Radar | 预判 data、metric、baseline、novelty、engineering、evaluation、paper/contribution 坑。 | 0 GPU |
+| Direction Scorecard | 用 7 个维度 1-5 分打分，输出 total score /100、risk_level 和 recommended verdict。 | 0 GPU |
+| Kill Tests | 设计至少 3 个低成本测试，其中至少 1 个能快速否定或收窄方向。 | 默认 0 GPU |
+| Decision Memo | 在方向值得正式裁决时，形成导师可审阅的证据备忘录和 gate JSON。 | 视 verdict 而定 |
+
+这条链路的目标是强化“定方向、防踩坑、低成本验证”。它不会自动启动训练、GPU pilot 或长时间实验。
 
 ## Decision Memo
 
@@ -129,6 +161,10 @@ Codex App 会自动从以下目录发现仓库级 skills：
 | Skill | 作用 |
 |---|---|
 | `$research-desk` | 顶层研究决策入口，负责第一性原理拆解与流程调度。 |
+| `$direction-brief` | 快速生成 1-2 页方向简报。 |
+| `$pitfall-radar` | 在早期识别数据、指标、基线、新意、工程、评估和贡献风险。 |
+| `$direction-scorecard` | 对方向按 7 个维度评分并给出推荐 verdict。 |
+| `$kill-test-generator` | 生成低成本 kill tests，优先找能否定方向的检查。 |
 | `$decision-memo` | 生成正式 Decision Memo、PDF 与 gate JSON。 |
 | `$preflight-gate` | 在实验、pilot、GPU 任务前执行硬阻断检查。 |
 | `$aris-runner` | 将具体任务路由到内置 ARIS Core 能力。 |
@@ -159,6 +195,32 @@ Codex App 会自动从以下目录发现仓库级 skills：
 | `tools/threat_scan.py` | 对会重新进入 agent 上下文的 wiki 内容做注入风险扫描。 |
 | `tools/self_check.py` | 检查仓库可移植性、依赖、skills 和路径泄漏。 |
 
+## v0.2 `decision.json` 字段
+
+旧版 `decision.json` 继续可用。v0.2 新增以下可选分诊字段，用来让 gate 状态更能表达方向质量、证据缺口和下一步条件：
+
+```json
+{
+  "direction_score": 57,
+  "risk_level": "high",
+  "main_claim": "The core research claim.",
+  "top_risks": ["risk 1", "risk 2", "risk 3"],
+  "evidence_gaps": ["missing evidence"],
+  "kill_tests": [],
+  "allowed_next_actions": ["文献查新", "静态分析"],
+  "blocked_actions": ["GPU 训练"],
+  "next_review_condition": "完成低成本检查后复审。"
+}
+```
+
+新增校验保持确定性，不依赖 LLM、网络或重型依赖：
+
+- `STATIC_ONLY` 必须包含至少一个静态 next action。
+- `NEEDS_MORE_EVIDENCE` 必须包含 `evidence_gaps` 或 `blocking_reasons`。
+- `NO_GO` 必须包含 `blocking_reasons`。
+- `GO` 必须包含 `resource_budget` 或 `max_gpu_hours_allowed`。
+- 阻断实验的 verdict 建议显式写 `blocked_actions`，但为了兼容旧文件，不作为硬失败条件。
+
 ## 快速开始
 
 克隆仓库后，用 Codex App 打开项目根目录。
@@ -179,6 +241,12 @@ python .\tools\self_check.py
 
 ```text
 Use $research-desk to evaluate whether SAE features can explain MoE expert routing before any GPU experiment.
+```
+
+快速做方向分诊：
+
+```text
+Use $direction-brief, $pitfall-radar, $direction-scorecard, and $kill-test-generator to triage VLM-based explainable open-set anomaly detection before any experiment.
 ```
 
 渲染 Decision Memo PDF：
@@ -212,6 +280,19 @@ BLOCK: STATIC_ONLY - STATIC_ONLY blocks experiment work
 ```powershell
 python .\tools\decision_gate.py latest .\projects\sae-moe-interpretability --mode static
 ```
+
+v0.2 还内置一个 CV 方向分诊示例：
+
+```text
+examples/vlm-explainable-open-set-anomaly/
+  DIRECTION_BRIEF.md
+  PITFALL_RADAR.md
+  DIRECTION_SCORECARD.md
+  KILL_TESTS.md
+  decision.json
+```
+
+示例方向是 “VLM-based explainable open-set anomaly detection”。它只展示 artifacts，不声称已经完成实验；推荐 verdict 为 `STATIC_ONLY`，原因是 novelty、解释忠实性和 baseline 协议还需要低成本证据。
 
 ## 设计原则
 

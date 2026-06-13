@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pitfall Radar"
+  short_description: "Identify early research direction pitfalls"
+  default_prompt: "Use $pitfall-radar to find cheap pre-checks for the likely pitfalls in this direction."

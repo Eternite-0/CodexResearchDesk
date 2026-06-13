@@ -17,6 +17,46 @@ ALLOWED_VERDICTS = {
     "USER_OVERRIDE",
 }
 ALLOWED_CONFIDENCE = {"high", "medium", "low"}
+ALLOWED_RISK_LEVELS = {"low", "medium", "high"}
+
+STATIC_ACTION_KEYWORDS = {
+    "static",
+    "literature",
+    "review",
+    "survey",
+    "checkpoint",
+    "analysis",
+    "audit",
+    "probe",
+    "non-training",
+    "non training",
+    "baseline check",
+    "查新",
+    "文献",
+    "静态",
+    "公开",
+    "非训练",
+    "分析",
+    "复核",
+    "审计",
+    "补证",
+}
+
+EXPERIMENT_ACTION_KEYWORDS = {
+    "experiment",
+    "training",
+    "train",
+    "gpu",
+    "pilot",
+    "run-experiment",
+    "experiment-bridge",
+    "fine-tune",
+    "finetune",
+    "实验",
+    "训练",
+    "试验",
+    "微调",
+}
 
 
 @dataclass
@@ -57,6 +97,39 @@ def load_decision(path: Path) -> dict[str, Any]:
     return data
 
 
+def nonempty_list(data: dict[str, Any], key: str) -> bool:
+    value = data.get(key)
+    if not isinstance(value, list):
+        return False
+    return any(str(item).strip() for item in value)
+
+
+def action_texts(data: dict[str, Any]) -> list[str]:
+    actions = data.get("allowed_next_actions")
+    if not isinstance(actions, list):
+        return []
+    return [str(action).lower() for action in actions]
+
+
+def has_keyword(texts: list[str], keywords: set[str]) -> bool:
+    return any(keyword in text for text in texts for keyword in keywords)
+
+
+def has_static_next_action(data: dict[str, Any]) -> bool:
+    return has_keyword(action_texts(data), STATIC_ACTION_KEYWORDS)
+
+
+def has_resource_budget(data: dict[str, Any]) -> bool:
+    if "max_gpu_hours_allowed" in data:
+        return True
+    budget = data.get("resource_budget")
+    if isinstance(budget, (dict, list)):
+        return bool(budget)
+    if isinstance(budget, str):
+        return bool(budget.strip())
+    return budget is not None
+
+
 def validate_decision(data: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     verdict = data.get("verdict")
@@ -77,11 +150,42 @@ def validate_decision(data: dict[str, Any]) -> list[str]:
         errors.append("blocking_reasons must be a list")
     if "allowed_next_actions" in data and not isinstance(data["allowed_next_actions"], list):
         errors.append("allowed_next_actions must be a list")
+    if "blocked_actions" in data and not isinstance(data["blocked_actions"], list):
+        errors.append("blocked_actions must be a list")
+    if "top_risks" in data and not isinstance(data["top_risks"], list):
+        errors.append("top_risks must be a list")
+    if "evidence_gaps" in data and not isinstance(data["evidence_gaps"], list):
+        errors.append("evidence_gaps must be a list")
+    if "kill_tests" in data and not isinstance(data["kill_tests"], list):
+        errors.append("kill_tests must be a list")
+    if "main_claim" in data and not isinstance(data["main_claim"], str):
+        errors.append("main_claim must be a string")
+    if "next_review_condition" in data and not isinstance(data["next_review_condition"], str):
+        errors.append("next_review_condition must be a string")
+    if "risk_level" in data and data["risk_level"] not in ALLOWED_RISK_LEVELS:
+        errors.append("risk_level must be one of low, medium, high")
+    if "direction_score" in data:
+        try:
+            score = float(data["direction_score"])
+            if score < 0 or score > 100:
+                errors.append("direction_score must be between 0 and 100")
+        except (TypeError, ValueError):
+            errors.append("direction_score must be numeric")
     if "max_gpu_hours_allowed" in data:
         try:
-            float(data["max_gpu_hours_allowed"])
+            max_gpu_hours = float(data["max_gpu_hours_allowed"])
+            if max_gpu_hours < 0:
+                errors.append("max_gpu_hours_allowed must be non-negative")
         except (TypeError, ValueError):
             errors.append("max_gpu_hours_allowed must be numeric")
+    if verdict == "STATIC_ONLY" and not has_static_next_action(data):
+        errors.append("STATIC_ONLY requires at least one static allowed_next_actions item")
+    if verdict == "NEEDS_MORE_EVIDENCE" and not (nonempty_list(data, "evidence_gaps") or nonempty_list(data, "blocking_reasons")):
+        errors.append("NEEDS_MORE_EVIDENCE requires evidence_gaps or blocking_reasons")
+    if verdict == "NO_GO" and not nonempty_list(data, "blocking_reasons"):
+        errors.append("NO_GO requires blocking_reasons")
+    if verdict == "GO" and not has_resource_budget(data):
+        errors.append("GO requires resource_budget or max_gpu_hours_allowed")
     return errors
 
 

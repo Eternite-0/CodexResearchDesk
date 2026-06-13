@@ -1,0 +1,4 @@
+interface:
+  display_name: "Direction Scorecard"
+  short_description: "Score a research direction for triage"
+  default_prompt: "Use $direction-scorecard to score this research direction and recommend a verdict."

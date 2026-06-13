@@ -79,9 +79,29 @@ Keep English only for stable identifiers: paper titles, model names, dataset nam
   "title": "Example idea",
   "verdict": "STATIC_ONLY",
   "confidence": "medium",
+  "direction_score": 58,
+  "risk_level": "high",
+  "main_claim": "The core research claim being gated.",
+  "top_risks": ["Novelty is not established."],
+  "evidence_gaps": ["Closest prior work has not been checked."],
+  "kill_tests": [
+    {
+      "test_name": "closest-prior-work check",
+      "hypothesis": "The claim is not already covered.",
+      "expected_cost": "2 hours, 0 GPU",
+      "pass_condition": "No direct overlap.",
+      "fail_condition": "Recent work already covers the claim.",
+      "decision_change_if_failed": "NO_GO"
+    }
+  ],
   "max_gpu_hours_allowed": 0,
+  "resource_budget": {
+    "max_gpu_hours_allowed": 0
+  },
   "allowed_next_actions": ["文献复核", "静态分析"],
+  "blocked_actions": ["GPU 训练"],
   "blocking_reasons": ["尚无直接证据"],
+  "next_review_condition": "完成低成本 kill tests 后复审。",
   "memo_md": "projects/example-project/decisions/example-idea/DECISION_MEMO.md",
   "memo_pdf": "projects/example-project/output/pdf/example-idea_decision_memo.pdf",
   "created_at": "2026-06-13T00:00:00Z"
@@ -89,6 +109,8 @@ Keep English only for stable identifiers: paper titles, model names, dataset nam
 ```
 
 If verdict is `USER_OVERRIDE`, add `override_reason`.
+
+The v0.2 triage fields are optional for legacy compatibility, but new Direction Triage Mode memos should include them when evidence exists.
 
 ## PDF Rendering
 

@@ -107,11 +107,38 @@
 {
   "idea_id": "[idea-slug]",
   "project_id": "[project-slug]",
+  "title": "[研究想法标题]",
   "verdict": "[GO | STATIC_ONLY | NEEDS_MORE_EVIDENCE | NO_GO | USER_OVERRIDE]",
   "confidence": "[high | medium | low]",
+  "direction_score": 0,
+  "risk_level": "[low | medium | high]",
+  "main_claim": "[核心 research claim]",
+  "top_risks": [
+    "[风险 1]",
+    "[风险 2]",
+    "[风险 3]"
+  ],
+  "evidence_gaps": [
+    "[证据缺口]"
+  ],
+  "kill_tests": [
+    {
+      "test_name": "[测试名]",
+      "hypothesis": "[待检验假设]",
+      "expected_cost": "[预计成本]",
+      "pass_condition": "[通过条件]",
+      "fail_condition": "[失败条件]",
+      "decision_change_if_failed": "[失败后的决策变化]"
+    }
+  ],
   "max_gpu_hours_allowed": 0,
+  "resource_budget": {
+    "max_gpu_hours_allowed": 0
+  },
   "allowed_next_actions": [],
+  "blocked_actions": [],
   "blocking_reasons": [],
+  "next_review_condition": "[下一次复审条件]",
   "memo_md": "projects/[project-slug]/decisions/[idea-slug]/DECISION_MEMO.md",
   "memo_pdf": "projects/[project-slug]/output/pdf/[idea-slug]_decision_memo.pdf",
   "created_at": "[ISO-8601 timestamp]"

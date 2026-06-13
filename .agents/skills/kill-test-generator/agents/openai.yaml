@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kill Test Generator"
+  short_description: "Generate low-cost kill tests"
+  default_prompt: "Use $kill-test-generator to propose low-cost tests that could falsify this direction."

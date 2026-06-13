@@ -46,7 +46,18 @@ Identify:
 - minimum publishable contribution if the claim holds
 - useful negative result if the claim fails
 
-### 3. Build Evidence With ARIS Core
+### 3. Run Direction Triage When the Direction Is Still Broad
+
+For early directions that are not ready for a full Decision Memo, use the v0.2 triage artifacts:
+
+1. `direction-brief` to frame the one-sentence direction, core claim, evidence needs, risks, and preliminary verdict.
+2. `pitfall-radar` to identify data, metric, baseline, novelty, engineering, evaluation, and contribution traps.
+3. `direction-scorecard` to score novelty, feasibility, data access, compute control, evaluation clarity, baseline reproducibility, and project value.
+4. `kill-test-generator` to define at least three low-cost tests before experiments.
+
+These artifacts help decide what not to do and what to validate first. They do not authorize GPU, training, pilots, or long-running jobs.
+
+### 4. Build Evidence With ARIS Core
 
 Use bundled ARIS capabilities only as tools for evidence:
 
@@ -58,7 +69,7 @@ Use bundled ARIS capabilities only as tools for evidence:
 
 When choosing an ARIS capability is non-obvious, use `aris-runner`.
 
-### 4. Produce a Decision Memo
+### 5. Produce a Decision Memo
 
 Invoke or follow `decision-memo`. Write all project artifacts under `projects/<project-slug>/`:
 
@@ -70,7 +81,7 @@ Invoke or follow `decision-memo`. Write all project artifacts under `projects/<p
 
 Use `templates/DECISION_MEMO_TEMPLATE.md` as the required structure.
 
-### 5. Gate Follow-Up Work
+### 6. Gate Follow-Up Work
 
 Before experiment-like follow-up, run:
 

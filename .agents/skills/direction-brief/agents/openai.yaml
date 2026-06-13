@@ -1,0 +1,4 @@
+interface:
+  display_name: "Direction Brief"
+  short_description: "Create a concise research direction brief"
+  default_prompt: "Use $direction-brief to turn this research direction into a concise triage brief before experiments."

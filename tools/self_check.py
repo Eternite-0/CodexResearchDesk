@@ -10,6 +10,10 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_SKILLS = [
     "research-desk",
     "decision-memo",
+    "direction-brief",
+    "direction-scorecard",
+    "pitfall-radar",
+    "kill-test-generator",
     "preflight-gate",
     "aris-runner",
     "research-lit",
@@ -44,7 +48,17 @@ REQUIRED_TOOLS = [
     "threat_scan.py",
 ]
 
+REQUIRED_TEMPLATES = [
+    "DECISION_MEMO_TEMPLATE.md",
+    "RESEARCH_BRIEF_TEMPLATE.md",
+    "DIRECTION_BRIEF_TEMPLATE.md",
+    "DIRECTION_SCORECARD_TEMPLATE.md",
+    "PITFALL_RADAR_TEMPLATE.md",
+    "KILL_TEST_TEMPLATE.md",
+]
+
 SAMPLE_PROJECT = ROOT / "projects" / "sae-moe-interpretability"
+SAMPLE_DIRECTION = ROOT / "examples" / "vlm-explainable-open-set-anomaly"
 
 REQUIRED_PACKAGES = [
     "reportlab",
@@ -89,6 +103,7 @@ def main() -> int:
         "sample project decision.json missing",
         errors,
     )
+    check(SAMPLE_DIRECTION.exists(), "v0.2 direction triage example exists", "v0.2 direction triage example missing", errors)
 
     for skill in REQUIRED_SKILLS:
         path = ROOT / ".agents" / "skills" / skill / "SKILL.md"
@@ -99,6 +114,14 @@ def main() -> int:
     for tool in REQUIRED_TOOLS:
         path = ROOT / "tools" / tool
         check(path.exists(), f"tool {tool}", f"missing tool: {tool}", errors)
+
+    for template in REQUIRED_TEMPLATES:
+        path = ROOT / "templates" / template
+        check(path.exists(), f"template {template}", f"missing template: {template}", errors)
+
+    for artifact in ["DIRECTION_BRIEF.md", "PITFALL_RADAR.md", "DIRECTION_SCORECARD.md", "KILL_TESTS.md", "decision.json"]:
+        path = SAMPLE_DIRECTION / artifact
+        check(path.exists(), f"example artifact {artifact}", f"missing example artifact: {artifact}", errors)
 
     style_tool = ROOT / "tools" / "check_report_style.py"
     if style_tool.exists():
