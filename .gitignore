@@ -6,6 +6,18 @@ __pycache__/
 .venv/
 venv/
 env/
+
+# Generated research artifacts. These are project-local outputs and should not
+# be uploaded by default; force-add only intentional examples.
+projects/*/decisions/**
+projects/*/research-wiki/**
+projects/*/output/**
+projects/*/tmp/**
+decisions/**
+research-wiki/**
+output/**
+tmp/**
+
 tmp/pdfs/*_thumb_*.png
 tmp/pdfs/*_contact_sheet.png
 output/pdf/*.pdf

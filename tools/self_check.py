@@ -35,6 +35,7 @@ REQUIRED_SKILLS = [
 REQUIRED_TOOLS = [
     "aris_tool_resolver.py",
     "arxiv_fetch.py",
+    "check_report_style.py",
     "decision_gate.py",
     "openalex_fetch.py",
     "render_markdown_pdf.py",
@@ -98,6 +99,20 @@ def main() -> int:
     for tool in REQUIRED_TOOLS:
         path = ROOT / "tools" / tool
         check(path.exists(), f"tool {tool}", f"missing tool: {tool}", errors)
+
+    style_tool = ROOT / "tools" / "check_report_style.py"
+    if style_tool.exists():
+        spec = importlib.util.spec_from_file_location("check_report_style", style_tool)
+        module = importlib.util.module_from_spec(spec) if spec else None
+        if module and spec and spec.loader:
+            spec.loader.exec_module(module)
+            style_errors = module.check_file(ROOT / "templates" / "DECISION_MEMO_TEMPLATE.md")
+            check(
+                not style_errors,
+                "Decision Memo template style",
+                f"Decision Memo template style issues: {style_errors[:3]}",
+                errors,
+            )
 
     for package in REQUIRED_PACKAGES:
         check(importlib.util.find_spec(package) is not None, f"python package {package}", f"missing python package: {package}", errors)

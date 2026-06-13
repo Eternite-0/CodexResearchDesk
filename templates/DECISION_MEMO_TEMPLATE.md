@@ -1,99 +1,107 @@
-# Decision Memo: [Idea Title]
+# 决策备忘录：[研究想法标题]
 
-**Idea ID**: [idea-slug]  
-**Project ID**: [project-slug]  
-**Date**: [YYYY-MM-DD]  
-**Verdict**: [GO / STATIC_ONLY / NEEDS_MORE_EVIDENCE / NO_GO / USER_OVERRIDE]  
-**Confidence**: [high / medium / low]  
-**Owner**: CodexResearchDesk  
+**想法编号**：[idea-slug]  
+**项目编号**：[project-slug]  
+**日期**：[YYYY-MM-DD]  
+**决策结论**：[GO / STATIC_ONLY / NEEDS_MORE_EVIDENCE / NO_GO / USER_OVERRIDE]  
+**置信度**：[high / medium / low]  
+**负责人**：CodexResearchDesk  
 
-## Executive Decision
+## 执行结论
 
-**Decision**: [one paragraph explaining whether the idea should consume experiment resources now]
+**结论**：[用一段话说明该想法现在是否允许消耗实验资源]
 
-**Reason**: [short, direct reason]
+**原因**：[用简短、直接的中文说明核心理由]
 
-## Premise Check
+## 术语口径
 
-| Item | Assessment |
+| 术语 | 中文口径 |
 |---|---|
-| User premise | [what the idea assumes or asks] |
-| Correction needed? | [yes/no + direct correction if any] |
-| Evidence status | [verified / partially verified / unverified] |
-| Retrieval used | [local wiki / ARIS literature tool / web search if available / none] |
+| [缩写或术语] | [定义一次，后续统一使用；必要的模型名、数据集名、指标缩写可保留英文] |
 
-## First-Principles Decomposition
+## 前提校验
 
-| Question | Answer |
+| 项目 | 判断 |
 |---|---|
-| What is the core claim? | [claim] |
-| What must be true? | [necessary conditions] |
-| What would falsify it? | [falsifier] |
-| What is the smallest useful unit of evidence? | [evidence unit] |
+| 用户问题 | [用户实际提出的研究方向或想法] |
+| 是否需要修正 | [是/否；如果前提错误或过宽，要直接修正] |
+| 证据状态 | [已核验 / 部分核验 / 未核验] |
+| 使用的检索来源 | [本地 wiki / ARIS 文献工具 / arXiv / Semantic Scholar / 网页检索 / 无] |
 
-## Multi-Perspective Reasoning
+## 一阶拆解
 
-### PI / Advisor View
+| 问题 | 回答 |
+|---|---|
+| 核心主张是什么？ | [claim] |
+| 哪些条件必须成立？ | [必要条件] |
+| 什么结果会推翻它？ | [falsifier] |
+| 最小可用证据是什么？ | [最低成本证据单元] |
+| 如果主张成立，最低可发表贡献是什么？ | [最小贡献] |
+| 如果主张不成立，有价值的负结果是什么？ | [负结果价值] |
 
-- **Upside**: [why it matters]
-- **Concern**: [why it may not be worth supervising]
-- **Decision pressure**: [what would convince the advisor]
+## 多视角判断
 
-### Resource Manager View
+### 导师视角
 
-- **Information gained per cost**: [assessment]
-- **Resource risk**: [risk]
-- **Stop condition**: [when to halt]
+- **价值**：[为什么值得监督或发表]
+- **顾虑**：[为什么可能不值得投入]
+- **说服条件**：[什么证据会改变判断]
 
-### Skeptical Reviewer View
+### 资源管理视角
 
-- **Strongest objection**: [objection]
-- **Likely rejection reason**: [reason]
-- **Required evidence**: [evidence]
+- **信息收益**：[单位成本能获得什么信息]
+- **资源风险**：[时间、GPU、API、标注或机会成本风险]
+- **停止条件**：[何时停止推进]
 
-## Evidence Ledger
+### 审稿人质疑视角
 
-| Type | Evidence | Strength | Notes |
+- **最强质疑**：[最强反对意见]
+- **可能拒稿理由**：[最可能被拒的原因]
+- **必须补足的证据**：[必须提供的实验证据或分析证据]
+
+## 证据台账
+
+| 类型 | 证据 | 强度 | 说明 |
 |---|---|---|---|
-| Supporting | [paper/result/argument] | [high/medium/low] | [notes] |
-| Opposing | [paper/result/argument] | [high/medium/low] | [notes] |
-| Adjacent | [related but not direct] | [high/medium/low] | [notes] |
-| Missing | [unknown] | [blocking/non-blocking] | [notes] |
+| 支持 | [论文 / 结果 / 论证] | [高 / 中 / 低] | [说明] |
+| 反对 | [论文 / 结果 / 论证] | [高 / 中 / 低] | [说明] |
+| 相邻 | [相关但不直接支持] | [高 / 中 / 低] | [说明] |
+| 缺失 | [未知或未核验] | [阻塞 / 非阻塞] | [说明] |
 
-## Critical Evaluation
+## 批判性评估
 
-### Advantages
+### 优势
 
-- [advantage]
+- [优势]
 
-### Weaknesses / Risks
+### 弱点与风险
 
-- [risk]
+- [风险]
 
-### Failure Modes
+### 失败模式
 
-- [failure mode and implication]
+- [失败模式及其影响]
 
-## Lowest-Cost Kill Test
+## 最低成本淘汰测试
 
-| Item | Plan |
+| 项目 | 方案 |
 |---|---|
-| Test type | [literature / static analysis / public checkpoint / tiny probe / GPU experiment] |
-| Inputs | [data, model, paper set, code] |
-| Metric / observable | [what to inspect] |
-| Pass condition | [what would justify next step] |
-| Kill condition | [what would stop the idea] |
-| Estimated cost | [time, GPU-hours, API cost] |
+| 测试类型 | [文献复核 / 静态分析 / 公开权重分析 / 非训练探针 / GPU 实验] |
+| 输入 | [数据、模型、论文集、代码] |
+| 观察指标 | [需要观察什么] |
+| 通过条件 | [什么结果能支持进入下一阶段] |
+| 淘汰条件 | [什么结果会停止该想法] |
+| 预计成本 | [时间、GPU 小时、API 成本] |
 
-## Resource Budget
+## 资源预算
 
-| Stage | Allowed? | Budget | Notes |
+| 阶段 | 是否允许 | 预算 | 说明 |
 |---|---:|---:|---|
-| Literature and prior art | yes | [hours] | [notes] |
-| Static/public checkpoint analysis | [yes/no] | [hours] | [notes] |
-| Training or GPU pilot | [yes/no] | [GPU-hours] | [notes] |
+| 文献复核与查新 | 是 | [小时] | [说明] |
+| 静态分析 / 公开权重分析 | [是/否] | [小时] | [说明] |
+| 训练或 GPU 试验 | [是/否] | [GPU 小时] | [说明] |
 
-## Final Gate
+## 最终门控
 
 ```json
 {
@@ -110,9 +118,9 @@
 }
 ```
 
-## Self-Audit
+## 自我审计
 
-- **Topic fit**: [yes/no + note on whether the memo answers the user's actual question]
-- **Factual accuracy**: [checked facts, unverified facts, and likely error sources]
-- **Logic closure**: [whether evidence and assumptions support the verdict]
-- **Overclaim check**: [what was softened or rejected]
+- **主题贴合**：[是/否；说明是否回答了用户真实问题]
+- **事实准确性**：[已核验事实、未核验事实、可能错误来源]
+- **逻辑闭合**：[证据和假设是否支撑结论]
+- **过度主张检查**：[哪些说法被收敛或否定]

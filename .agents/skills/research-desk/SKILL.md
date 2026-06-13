@@ -101,5 +101,8 @@ Use Markdown deliberately:
 - Bold key conclusions.
 - Use tables or lists for evidence, risk, budget, and verdict comparisons.
 - Separate facts, inference, and unknowns.
+- Match the user's working language. For Chinese research requests, write the Decision Memo in Chinese using the Chinese-first template.
+- Do not mix English boilerplate into Chinese reports. Keep English only for stable identifiers such as model names, dataset names, paper titles, code paths, JSON keys, metric abbreviations, and gate enum values.
+- For unavoidable abbreviations, add a short terminology section and then use terms consistently.
 
 The final answer should name the verdict, the reason, the PDF path, and the next allowed action.

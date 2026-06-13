@@ -29,6 +29,20 @@ When evaluating a research direction or idea:
 - Separate known facts, reasoned inference, and open uncertainty.
 - If the user's premise is corrected, record the correction explicitly instead of hiding it inside prose.
 
+## Language and Terminology Discipline
+
+- Match the user's working language. For Chinese requests, write advisor-facing artifacts in Chinese by default.
+- Do not mix English boilerplate into Chinese reports. Section titles, table headers, list labels, action items, risk reasons, and prose should use Chinese.
+- Keep English only when it is a stable technical identifier: model names, dataset names, paper titles, code paths, JSON keys, command names, metric abbreviations, and gate enum values such as `STATIC_ONLY`.
+- For unavoidable abbreviations, define them once in a short terminology section, then reuse the abbreviation consistently.
+- `decision.json` keeps machine keys and enum values in English, but human-readable values such as `allowed_next_actions` and `blocking_reasons` should follow the report language.
+- Use `templates/DECISION_MEMO_TEMPLATE.md` as the canonical Chinese-first structure for Decision Memos.
+- Before delivering a Chinese Decision Memo, run:
+
+```powershell
+python .\tools\check_report_style.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md
+```
+
 ## Decision Gate
 
 Every research idea that may consume experiment resources must have:
