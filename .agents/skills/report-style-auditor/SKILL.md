@@ -1,6 +1,6 @@
 ---
 name: report-style-auditor
-description: "Audit Chinese research reports for English boilerplate, chatbot residue, vague authority, and AI-flavored filler before Markdown/PDF delivery. Use for Decision Memos, Direction Briefs, research reports, advisor-facing summaries, and paper-planning artifacts."
+description: "Audit Chinese research reports for English boilerplate, chatbot residue, vague authority, and AI-flavored filler before Markdown/PDF delivery. Use for Decision Memos, Direction Briefs, Temporal Holdout reports, research reports, advisor-facing summaries, and paper-planning artifacts."
 ---
 
 # Report Style Auditor
@@ -15,6 +15,7 @@ Use this before final delivery of:
 
 - Chinese `IDEA_SPRINT.md` and idea cards that will be shown to a human
 - Chinese `DECISION_MEMO.md`
+- Chinese `TEMPORAL_HOLDOUT_REPORT.md`
 - Direction triage artifacts
 - research-wiki summaries that will be shown to a human
 - paper plans or narrative reports

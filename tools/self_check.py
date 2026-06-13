@@ -16,6 +16,7 @@ REQUIRED_SKILLS = [
     "external-signal-scout",
     "paper-code-scout",
     "kill-test-generator",
+    "temporal-holdout-arena",
     "report-style-auditor",
     "preflight-gate",
     "aris-runner",
@@ -41,6 +42,7 @@ REQUIRED_SKILLS = [
 
 REQUIRED_TOOLS = [
     "aris_tool_resolver.py",
+    "arena_holdout_bridge.py",
     "arxiv_fetch.py",
     "check_ai_style.py",
     "check_report_style.py",

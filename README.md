@@ -44,6 +44,7 @@ Seed Scan
 → Idea Cards
 → Evidence Probe
 → Promote / Narrow / Drop
+→ Optional External Arena Backtest
 → Decision Memo only before expensive work
 ```
 
@@ -60,7 +61,158 @@ Seed Scan
 | Idea Cards | 生成候选 idea，并强制写清 claim、非 A+B、避坑点、隐藏坑、falsifier。 | 0 GPU |
 | Evidence Probe | 只对前 1-3 个候选查关键外部信号、论文代码、指标或最低成本 kill test。 | 0 GPU |
 | Promote / Narrow / Drop | 明确哪些继续、哪些收窄、哪些放弃。 | 0 GPU |
+| External Arena Backtest | 在独立 ResearchSkillArena 中，用 t-1 前论文冻结 idea，再看 t 之后论文是否触及，用于评估 skill 的提前发现能力。 | 0 GPU |
 | Decision Memo | 只有下一步会消耗 GPU、训练、长任务或正式汇报时才生成。 | 视 verdict 而定 |
+
+## Temporal Holdout 回测
+
+Temporal Holdout 不是普通查新，也不是给当前 idea 找 related work。它评估的是：**如果 `$research-desk` 只看到 cutoff 年及以前的论文，它能不能提前生成后来被未来论文触及的 idea。**
+
+因此它回答的是系统质量问题：
+
+```text
+过去论文 t-1
+→ 历史-only idea 生成
+→ 冻结 IDEAS_FROZEN.md
+→ 未来论文 t
+→ 候选命中账本
+→ 实验图表审阅
+→ 回测报告
+```
+
+### 什么时候用
+
+用它：
+
+- 当你想知道这套调研 workflow 是否真的有“提前发现方向”的能力。
+- 当你要比较不同 skill、不同提示词、不同模型版本的 idea 生成质量。
+- 当导师或合作者问“这不是事后诸葛亮吗？”时，用回测报告作为系统级证据。
+
+不要用它：
+
+- 不要把它当成当前 idea 的查新。当前 idea 仍然需要正常 novelty check。
+- 不要把它当成实验放行。实验仍然需要 Decision Memo 和 gate。
+- 不要在普通快速调研时默认跑；只有用户明确说“回测 / holdout / 自动跑竞技场 / 评估系统质量”才跑。
+
+### 为什么 arena 单独放
+
+`CodexResearchDesk` 是工作台，被测系统在这里生成 idea。`D:\ResearchSkillArena` 是考场，负责保存过去/未来语料、命中账本、Papers.cool 预筛和回测报告。
+
+这样分开是为了防泄漏：未来窗口论文、命中标签和评分报告不回流到被测系统，避免下一次 `$research-desk` 在无意中读到答案。
+
+Desk 里只保存轻量 link：
+
+```text
+projects/<project-slug>/arena-links/<run-slug>.json
+```
+
+### Codex 驱动流程
+
+你仍然在 `D:\CodexResearchDesk` 里发起任务。最自然的提示词是：
+
+```text
+Use $research-desk 调研 <topic>，生成中文 Idea Sprint，并在结束后自动跑 ResearchSkillArena temporal holdout 回测。年份没指定就按默认窗口。
+```
+
+如果手动跑 bridge，完整阶段是：
+
+```powershell
+python .\tools\arena_holdout_bridge.py prepare `
+  --project <project-slug> `
+  --run <run-slug> `
+  --topic "<historically-valid topic>" `
+  --cutoff-year 2024 `
+  --future-start 2025 `
+  --future-end 2026
+```
+
+`prepare` 会在 arena 中创建 config、历史 prompt，并收集 `past_corpus.jsonl`。然后 `$research-desk` 只能读：
+
+```text
+D:\ResearchSkillArena\tasks\<project-slug>\<run-slug>\historical_idea_prompt.md
+D:\ResearchSkillArena\tasks\<project-slug>\<run-slug>\past_corpus.jsonl
+```
+
+生成历史-only ideas 后冻结：
+
+```powershell
+python .\tools\arena_holdout_bridge.py submit-ideas `
+  --project <project-slug> `
+  --run <run-slug> `
+  --ideas-file <path-to-IDEAS_FROZEN.md>
+```
+
+再生成未来候选和预筛队列：
+
+```powershell
+python .\tools\arena_holdout_bridge.py make-ledger --project <project-slug> --run <run-slug>
+```
+
+不确定进度时：
+
+```powershell
+python .\tools\arena_holdout_bridge.py status --project <project-slug> --run <run-slug>
+```
+
+### Arena 产物
+
+核心产物都在 `D:\ResearchSkillArena`：
+
+```text
+tasks/<project>/<run>/
+  config.json
+  past_corpus.jsonl
+  future_corpus.jsonl
+  historical_idea_prompt.md
+submissions/<project>/<run>/
+  IDEAS_FROZEN.md
+  metadata.json
+reports/<project>/<run>/
+  hit_ledger.csv
+  papers_cool_insights.jsonl
+  papers_cool_review_brief.md
+  papers_cool_triage.csv
+  papers_cool_triage.md
+  TEMPORAL_HOLDOUT_REPORT.md
+output/pdf/
+  <project>_<run>_temporal_holdout.pdf
+```
+
+### Papers.cool 省 Token 漏斗
+
+`make-ledger` 默认会对 arXiv 候选抓取 Papers.cool/Kimi 解读并生成预筛队列。Codex 应先读：
+
+```text
+D:\ResearchSkillArena\reports\<project>\<run>\papers_cool_triage.md
+```
+
+预筛结果只决定是否值得打开 PDF：
+
+| 字段 | 含义 |
+|---|---|
+| `needs_pdf_review=yes` | 优先打开 PDF，看图、表、消融和指标。 |
+| `needs_pdf_review=maybe` | 等 `yes` 看完后再扫。 |
+| `needs_pdf_review=no` | 暂缓，不消耗 PDF 阅读 token。 |
+
+Papers.cool/Kimi 解读不能单独支持 `direct_hit` 或 `partial_hit`。真正命中必须回到论文实验图表。
+
+可选命令：
+
+```powershell
+python .\tools\arena_holdout_bridge.py enrich-cool --project <project> --run <run>
+python .\tools\arena_holdout_bridge.py triage-cool --project <project> --run <run>
+python .\tools\arena_holdout_bridge.py make-ledger --project <project> --run <run> --skip-cool
+```
+
+### 最终报告
+
+审完 `hit_ledger.csv` 后生成报告和 PDF：
+
+```powershell
+python .\tools\arena_holdout_bridge.py finalize-report --project <project-slug> --run <run-slug>
+```
+
+`finalize-report` 会调用 arena 的中文风格检查和 PDF 渲染。报告仍保存在 `D:\ResearchSkillArena`，不复制回 Desk。
 
 ## 项目产物
 
@@ -81,6 +233,8 @@ projects/<project-slug>/
   evidence-packets/<run-slug>/
     <packet-slug>.md
     EVIDENCE_PACKET_INDEX.md
+  arena-links/
+    <run-slug>.json
   research-wiki/
   output/pdf/
     <sprint-slug>_idea_sprint.pdf
@@ -97,6 +251,7 @@ projects/<project-slug>/
 - `paper_code.json`：代码库静态尽调结构化数据。
 - `IDEA_SPRINT.md`：候选 idea cards 和避坑台账，按需生成。
 - `evidence-packets/`：子代理或分块取证结果，主 Agent 优先读这些短证据包。
+- `arena-links/`：外部 ResearchSkillArena run 的轻量索引，只保存路径和状态，不保存未来语料。
 - `<sprint-slug>_idea_sprint.pdf`：Idea Sprint 快速审阅版 PDF。
 - `output/pdf/`：正式 PDF 交付物。
 - `research-wiki/`：项目级长期记忆。
@@ -147,6 +302,64 @@ python .\tools\paper_code_fetch.py scout "AutoResearchClaw autonomous research" 
   --arxiv-id 2605.20025
 ```
 
+评估 idea workflow 是否能提前发现方向，请使用独立 arena，而不是把未来语料放进本仓库：
+
+```powershell
+python .\tools\arena_holdout_bridge.py prepare `
+  --project coding-agent `
+  --run swebench-backtest-2023 `
+  --topic "coding agents GitHub issue repair SWE-bench" `
+  --cutoff-year 2023 `
+  --future-start 2024 `
+  --future-end 2026
+```
+
+随后让 `$research-desk` 读取 arena 生成的 `historical_idea_prompt.md`，只允许使用 arena 的 `past_corpus.jsonl`，并产出历史-only ideas。保存后用 bridge 冻结：
+
+```powershell
+python .\tools\arena_holdout_bridge.py submit-ideas `
+  --project coding-agent `
+  --run swebench-backtest-2023 `
+  --ideas-file .\projects\coding-agent\idea-sprints\swebench-backtest-2023\IDEAS_FROZEN.md
+```
+
+之后继续生成候选命中账本：
+
+```powershell
+python .\tools\arena_holdout_bridge.py make-ledger --project coding-agent --run swebench-backtest-2023
+```
+
+这一步默认会对 arXiv 候选调用 Papers.cool/Kimi 解读，并在 arena 里生成：
+
+```text
+D:\ResearchSkillArena\reports\coding-agent\swebench-backtest-2023\papers_cool_review_brief.md
+D:\ResearchSkillArena\reports\coding-agent\swebench-backtest-2023\papers_cool_triage.md
+```
+
+先读 `papers_cool_triage.md`，只对 `needs_pdf_review=yes` 的候选打开 PDF；`maybe` 等高优先级看完再说。这样才真正省 token。审阅 `hit_ledger.csv` 时必须看未来论文的图、表、消融、指标和实验设置，不能只凭 Kimi 解读或论文结论判 `direct_hit`。审完后再渲染报告：
+
+```powershell
+python .\tools\arena_holdout_bridge.py finalize-report --project coding-agent --run swebench-backtest-2023
+```
+
+不确定当前到哪一步时：
+
+```powershell
+python .\tools\arena_holdout_bridge.py status --project coding-agent --run swebench-backtest-2023
+```
+
+如果不想访问 Papers.cool，可在生成账本时加 `--skip-cool`；如果只想补抓解读，可运行：
+
+```powershell
+python .\tools\arena_holdout_bridge.py enrich-cool --project coding-agent --run swebench-backtest-2023
+```
+
+如果已经有缓存，只想重建 PDF 审阅优先级队列：
+
+```powershell
+python .\tools\arena_holdout_bridge.py triage-cool --project coding-agent --run swebench-backtest-2023
+```
+
 检查某个项目是否允许实验：
 
 ```powershell
@@ -174,6 +387,7 @@ Codex App 会从 `.agents/skills/` 发现仓库级 skills。
 | `$paper-code-scout` | 根据论文反查代码库，做只读静态尽调并暴露后续复现风险。 |
 | `$direction-scorecard` | 按 7 个维度评分并给出推荐 verdict。 |
 | `$kill-test-generator` | 生成低成本淘汰测试。 |
+| `$temporal-holdout-arena` | 在当前 Desk 内驱动外部 ResearchSkillArena，回测 workflow 是否能从历史论文提前生成方向。 |
 | `$decision-memo` | 生成正式 Decision Memo、PDF 和 gate JSON。 |
 | `$report-style-auditor` | 交付前检查中文报告的模板残留和 AI 味。 |
 | `$preflight-gate` | 在实验、pilot、GPU 任务前执行硬门控。 |
@@ -194,6 +408,7 @@ Codex App 会从 `.agents/skills/` 发现仓库级 skills。
 | 工具 | 作用 |
 |---|---|
 | `tools/decision_gate.py` | 机械执行 go / no-go 检查。 |
+| `tools/arena_holdout_bridge.py` | 从 CodexResearchDesk 驱动外部 ResearchSkillArena 的 temporal holdout 回测。 |
 | `tools/external_signal_fetch.py` | 抓取外部软门控信号并生成项目级账本。 |
 | `tools/paper_code_fetch.py` | 从论文追踪代码库并生成项目级静态尽调账本。 |
 | `tools/render_markdown_pdf.py` | 中文友好的 Markdown 到 PDF 渲染。 |

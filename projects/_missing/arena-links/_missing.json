@@ -1,0 +1,22 @@
+{
+  "project": "_missing",
+  "run": "_missing",
+  "stage": "status_checked",
+  "arena_root": "D:\\ResearchSkillArena",
+  "updated_at": "2026-06-13T16:34:26+00:00",
+  "note": "Only a lightweight link is stored in CodexResearchDesk. Corpora, ledgers, reports, and PDFs stay in ResearchSkillArena.",
+  "paths": {
+    "config": "D:\\ResearchSkillArena\\tasks\\_missing\\_missing\\config.json",
+    "task_dir": "D:\\ResearchSkillArena\\tasks\\_missing\\_missing",
+    "past_corpus": "D:\\ResearchSkillArena\\tasks\\_missing\\_missing\\past_corpus.jsonl",
+    "future_corpus": "D:\\ResearchSkillArena\\tasks\\_missing\\_missing\\future_corpus.jsonl",
+    "historical_prompt": "D:\\ResearchSkillArena\\tasks\\_missing\\_missing\\historical_idea_prompt.md",
+    "submission_dir": "D:\\ResearchSkillArena\\submissions\\_missing\\_missing",
+    "ideas_frozen": "D:\\ResearchSkillArena\\submissions\\_missing\\_missing\\IDEAS_FROZEN.md",
+    "metadata": "D:\\ResearchSkillArena\\submissions\\_missing\\_missing\\metadata.json",
+    "report_dir": "D:\\ResearchSkillArena\\reports\\_missing\\_missing",
+    "ledger": "D:\\ResearchSkillArena\\reports\\_missing\\_missing\\hit_ledger.csv",
+    "report": "D:\\ResearchSkillArena\\reports\\_missing\\_missing\\TEMPORAL_HOLDOUT_REPORT.md",
+    "pdf": "D:\\ResearchSkillArena\\output\\pdf\\_missing__missing_temporal_holdout.pdf"
+  }
+}

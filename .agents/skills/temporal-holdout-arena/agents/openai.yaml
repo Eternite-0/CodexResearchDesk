@@ -1,0 +1,4 @@
+interface:
+  display_name: "Temporal Holdout Arena"
+  short_description: "自动连接外部 arena 回测调研 workflow"
+  default_prompt: "Use $temporal-holdout-arena to backtest whether a research workflow could have anticipated a topic from past papers only."

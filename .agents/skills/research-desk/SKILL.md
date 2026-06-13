@@ -1,6 +1,6 @@
 ---
 name: research-desk
-description: "Codex app driven research workflow for generating, refining, and evaluating research ideas before experiments. Use when the user wants valuable idea directions, paper/repo-driven idea discovery, first-principles analysis, pitfall avoidance, pre-experiment reasoning, go/no-go decisions, advisor-facing Chinese research briefs or Idea Sprints, or ARIS tool routing without launching experiments."
+description: "Codex app driven research workflow for generating, refining, and evaluating research ideas before experiments. Use when the user wants valuable idea directions, paper/repo-driven idea discovery, temporal holdout/backtest evaluation of idea generation, first-principles analysis, pitfall avoidance, pre-experiment reasoning, go/no-go decisions, advisor-facing Chinese research briefs or Idea Sprints, or ARIS tool routing without launching experiments."
 ---
 
 # Research Desk
@@ -31,6 +31,7 @@ Seed Scan
 → Idea Cards
 → Evidence Probe
 → Promote / Narrow / Drop
+→ Optional/Requested External Arena Backtest
 → Decision Memo only before expensive work
 ```
 
@@ -116,6 +117,35 @@ Avoid loading raw paper text, full README dumps, or repository source trees into
 Use `decision-memo` and `preflight-gate` only when the next action might consume GPU, training time, pilot engineering, long-running jobs, or advisor-facing formal review.
 
 Full gate produces Markdown, PDF, and `decision.json`.
+
+### 5. External Arena Backtest
+
+Use the separate `ResearchSkillArena` repo when the user asks whether the idea-generation workflow actually anticipates future work, when they say "自动跑竞技场 / 回测 / holdout", or when a project needs system-level validation rather than another direction card.
+
+The arena is optional and diagnostic. It does not replace novelty checks for a concrete idea and does not authorize experiments. Keep future corpora, hit ledgers, and scoring reports outside CodexResearchDesk to reduce leakage.
+
+When the user asks for normal current research, do not run the arena by default. When the user asks to automatically run the arena after research, do it as part of the Codex workflow and use `$temporal-holdout-arena` plus:
+
+```powershell
+python .\tools\arena_holdout_bridge.py <command> ...
+```
+
+Automated bridge workflow:
+
+1. Finish or draft the current Idea Sprint if the user asked for current research.
+2. Start a separate arena run with `prepare`; choose explicit years if supplied, otherwise state the inferred window. Default: cutoff is current year minus 2, future window is cutoff+1 through current year.
+3. If the topic mentions a post-cutoff artifact, rewrite the holdout query into a historically valid broader topic before `prepare`.
+4. Generate `IDEAS_FROZEN.md` from the arena `historical_idea_prompt.md`, reading only the arena `past_corpus.jsonl`.
+5. Freeze the file with `submit-ideas`.
+6. Run `make-ledger` to collect future papers, create candidate matches, and fetch Papers.cool/Kimi auxiliary interpretations for arXiv candidates unless `--skip-cool` is explicitly needed.
+7. Read the arena `papers_cool_triage.md` first. Open PDFs only for `needs_pdf_review=yes` candidates at first; inspect `maybe` only if the high-priority queue is exhausted or a specific idea has no high-priority candidate.
+8. Use `papers_cool_review_brief.md` only as supporting pre-read after the triage queue points to a candidate. Do not use it as final hit evidence.
+9. Stop for experiment-first ledger review unless the user explicitly asks Codex to review candidate papers. Do not auto-label direct/partial hits from Papers.cool, abstracts, or conclusions.
+10. After the ledger has figure/table/experiment evidence, run `finalize-report`.
+
+Important: do not reuse today's normal Idea Sprint as the frozen holdout submission. The holdout submission must be generated under historical-only constraints, otherwise the test is leaked.
+
+Use OpenAlex as the primary source, with Semantic Scholar and arXiv as supplements. Treat any high `invalid_prior` rate as evidence that the historical novelty scan was weak. Treat many `adjacent_hit` labels as evidence that the idea cards were too broad. Treat conclusion-only future-paper matches as invalid until the arena reviewer checks figures, tables, metrics, ablations, and experiment settings.
 
 ## Detailed Procedure
 
@@ -236,6 +266,8 @@ Then render a review PDF:
 ```powershell
 python .\tools\render_markdown_pdf.py .\projects\<project-slug>\idea-sprints\<sprint-slug>\IDEA_SPRINT.md --output .\projects\<project-slug>\output\pdf\<sprint-slug>_idea_sprint.pdf --preview --preview-dir .\projects\<project-slug>\tmp\pdfs
 ```
+
+For Chinese temporal holdout reports, use the style tools inside `ResearchSkillArena`, because the report belongs to the external arena, not this working desk.
 
 ### 7. Gate Follow-Up Work
 
