@@ -40,6 +40,7 @@ CodexResearchDesk 不是自动生成论文的流水线，也不是“给一个 A
 
 ```text
 Seed Scan
+→ Evidence Packets
 → Idea Cards
 → Evidence Probe
 → Promote / Narrow / Drop
@@ -49,7 +50,8 @@ Seed Scan
 ```mermaid
 flowchart TD
     A["论文 / 仓库 / 外部信号 / 领域痛点"] --> B["Seed Scan"]
-    B --> C["Idea Cards"]
+    B --> P["Evidence Packets"]
+    P --> C["Idea Cards"]
     C --> D["Evidence Probe"]
     D --> E{"Promote / Narrow / Drop"}
     E -->|promote| F["Direction Brief / Pitfall / Kill Tests"]
@@ -64,6 +66,7 @@ flowchart TD
 | 阶段 | 作用 | 默认成本 |
 |---|---|---:|
 | Seed Scan | 轻扫论文、仓库、外部信号和领域痛点，只收集能产 idea 的种子。 | 0 GPU |
+| Evidence Packets | 子代理或主 Agent 分块取证，每个 packet 只回答一个问题。 | 0 GPU |
 | Idea Cards | 生成候选 idea，并强制写清 claim、非 A+B、避坑点、隐藏坑、falsifier。 | 0 GPU |
 | Evidence Probe | 只对前 1-3 个候选查关键外部信号、论文代码、指标或最低成本 kill test。 | 0 GPU |
 | Promote / Narrow / Drop | 明确哪些继续、哪些收窄、哪些放弃。 | 0 GPU |
@@ -85,8 +88,12 @@ projects/<project-slug>/
     paper_code.json
   idea-sprints/
     IDEA_SPRINT.md
+  evidence-packets/<run-slug>/
+    <packet-slug>.md
+    EVIDENCE_PACKET_INDEX.md
   research-wiki/
   output/pdf/
+    <sprint-slug>_idea_sprint.pdf
   tmp/pdfs/
 ```
 
@@ -99,6 +106,8 @@ projects/<project-slug>/
 - `PAPER_CODE_LEDGER.md`：论文到代码库追踪账本。
 - `paper_code.json`：代码库静态尽调结构化数据。
 - `IDEA_SPRINT.md`：候选 idea cards 和避坑台账，按需生成。
+- `evidence-packets/`：子代理或分块取证结果，主 Agent 优先读这些短证据包。
+- `<sprint-slug>_idea_sprint.pdf`：Idea Sprint 快速审阅版 PDF。
 - `output/pdf/`：正式 PDF 交付物。
 - `research-wiki/`：项目级长期记忆。
 
@@ -221,6 +230,44 @@ Idea Card 不是头脑风暴列表。每个候选必须回答：
 
 默认只把 1-3 个候选推进到后续补证。
 
+中文 Idea Cards、Idea Sprint、Direction artifacts 和 Decision Memo 交付前都要走 `$report-style-auditor` 口径：去掉聊天残留、宣传腔、模糊归因和模板味，但不能改强证据、结论、数字、路径或 gate 状态。
+
+## 防上下文爆炸
+
+复杂调研默认用“主 Agent 编排 + 子代理 Evidence Packets”：
+
+- 主 Agent 只负责拆任务、合成 idea cards、决定 promote/narrow/drop。
+- 子代理只回答一个窄问题，例如 paper-code trace、external signal、pitfall review、kill test design。
+- 每个子代理输出 `projects/<project>/evidence-packets/<run>/<packet>.md`。
+- 主 Agent 优先读取 packet 和 `EVIDENCE_PACKET_INDEX.md`，不直接吞论文全文、README 全文或源码树。
+- 只有 packet 冲突、关键证据缺失、或要写正式 Decision Memo 时，才打开原始来源。
+- 子代理不得生成 Decision Memo、不得设计训练实验、不得全量爬 repo。
+
+相关模板：
+
+- `templates/SUBAGENT_TASK_TEMPLATE.md`
+- `templates/EVIDENCE_PACKET_TEMPLATE.md`
+- `templates/EVIDENCE_PACKET_INDEX_TEMPLATE.md`
+
+示例提示词：
+
+```text
+Use $research-desk to generate idea cards for <topic>.
+
+Use subagents for bounded evidence packets:
+1. Seed Scan packet: closest papers, benchmarks, and field pain points.
+2. Paper-Code Trace packet: whether key papers have repos, data, checkpoint, and eval signals.
+3. External Signal packet: GitHub, alphaXiv/HF Papers, HN/OpenAlex/Semantic Scholar, and manual enterprise/social signals.
+4. Pitfall Review packet: data, metric, baseline, novelty, engineering, evaluation, and contribution traps.
+
+Each subagent must write one packet under:
+projects/<project>/evidence-packets/<run-slug>/<packet-slug>.md
+
+Each packet must answer one question, stay compact, cite links/paths, include negative evidence, and end with promote/static_precheck/narrow/drop.
+
+The main Agent should only read packet summaries and then produce IDEA_SPRINT.md plus PDF. Do not create a Decision Memo or run experiments.
+```
+
 ## Decision Gate
 
 允许的 verdict：
@@ -260,6 +307,16 @@ Idea Card 不是头脑风暴列表。每个候选必须回答：
 外部信号是软门控：它影响风险、优先级和下一步检查，但不单独决定 `GO` 或 `NO_GO`。
 
 ## 交付检查
+
+Idea Sprint 写入文件后渲染 PDF：
+
+```powershell
+python .\tools\render_markdown_pdf.py `
+  .\projects\<project-slug>\idea-sprints\<sprint-slug>\IDEA_SPRINT.md `
+  --output .\projects\<project-slug>\output\pdf\<sprint-slug>_idea_sprint.pdf `
+  --preview `
+  --preview-dir .\projects\<project-slug>\tmp\pdfs
+```
 
 中文 Decision Memo 交付前运行：
 

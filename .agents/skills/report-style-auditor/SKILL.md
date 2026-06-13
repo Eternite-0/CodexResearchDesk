@@ -13,10 +13,13 @@ Improve advisor-facing research artifacts without weakening evidence discipline.
 
 Use this before final delivery of:
 
+- Chinese `IDEA_SPRINT.md` and idea cards that will be shown to a human
 - Chinese `DECISION_MEMO.md`
 - Direction triage artifacts
 - research-wiki summaries that will be shown to a human
 - paper plans or narrative reports
+
+For Idea Cards, use it as a light final pass: remove chatbot residue and vague hype without making the idea sound stronger than the evidence supports.
 
 For formal Decision Memos, run it after factual/style checks and before PDF rendering.
 

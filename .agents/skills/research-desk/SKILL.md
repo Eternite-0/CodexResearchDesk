@@ -34,6 +34,36 @@ Seed Scan
 → Decision Memo only before expensive work
 ```
 
+## Context And Delegation Protocol
+
+The main Agent is the coordinator and editor, not the only researcher. When the environment supports subagents and the user permits delegation, split broad idea-generation work into bounded evidence packets.
+
+Use subagents for independent evidence slices such as:
+
+- Seed Scan: closest papers, benchmarks, and field pain points.
+- Paper-Code Trace: whether key papers have usable repos, README links, license, data, checkpoint, and eval signals.
+- External Signal: GitHub, alphaXiv/HF Papers, HN, OpenAlex/Semantic Scholar, and manual social/enterprise evidence.
+- Pitfall Review: likely data, metric, baseline, novelty, engineering, evaluation, and contribution traps.
+- Kill Test Design: 0-GPU checks with pass/fail conditions.
+
+Do not delegate the final synthesis. The main Agent must decide which ideas are promoted, narrowed, or dropped.
+
+Each subagent output must be an Evidence Packet using `templates/EVIDENCE_PACKET_TEMPLATE.md`:
+
+- one packet answers one question.
+- target 400-800 Chinese words plus compact tables.
+- cite links or file paths instead of pasting long source text.
+- include negative evidence and uncertainty.
+- end with `promote`, `static_precheck`, `narrow`, or `drop`.
+
+Default packet path:
+
+```text
+projects/<project-slug>/evidence-packets/<run-slug>/<packet-slug>.md
+```
+
+If subagents are unavailable, use the same packet format sequentially. This keeps context bounded even in single-agent mode.
+
 ### 1. Seed Scan
 
 Collect only enough seeds to generate ideas:
@@ -72,6 +102,14 @@ Probe only the top one to three cards:
 - use `direction-scorecard` only when multiple promoted cards must be compared.
 
 Stop once the next useful action is clear.
+
+For multi-agent runs, the main Agent should read only:
+
+- Evidence Packet summaries.
+- the top few source links or local paths cited in packets.
+- structured JSON ledgers such as `external_signals.json` and `paper_code.json` when needed.
+
+Avoid loading raw paper text, full README dumps, or repository source trees into the main context.
 
 ### 4. Formal Gate
 
@@ -152,6 +190,8 @@ When choosing an ARIS capability is non-obvious, use `aris-runner`.
 Invoke or follow `decision-memo`. Write all project artifacts under `projects/<project-slug>/`:
 
 - `projects/<project-slug>/idea-sprints/<sprint-slug>/IDEA_SPRINT.md` when Idea Sprint is written to disk
+- `projects/<project-slug>/evidence-packets/<run-slug>/<packet-slug>.md` when subagent or packetized evidence was used
+- `projects/<project-slug>/output/pdf/<sprint-slug>_idea_sprint.pdf` when Idea Sprint is written to disk
 - `projects/<project-slug>/decisions/<idea-slug>/DECISION_MEMO.md`
 - `projects/<project-slug>/decisions/<idea-slug>/decision.json`
 - `projects/<project-slug>/signals/<idea-slug>/EXTERNAL_SIGNAL_LEDGER.md` when external signal scouting was used
@@ -169,6 +209,12 @@ Before rendering or delivering a Chinese Decision Memo, invoke or follow `report
 ```powershell
 python .\tools\check_report_style.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md
 python .\tools\check_ai_style.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md
+```
+
+When writing an Idea Sprint artifact to disk, render a review PDF too:
+
+```powershell
+python .\tools\render_markdown_pdf.py .\projects\<project-slug>\idea-sprints\<sprint-slug>\IDEA_SPRINT.md --output .\projects\<project-slug>\output\pdf\<sprint-slug>_idea_sprint.pdf --preview --preview-dir .\projects\<project-slug>\tmp\pdfs
 ```
 
 ### 7. Gate Follow-Up Work
@@ -207,3 +253,5 @@ Use Markdown deliberately:
 - For unavoidable abbreviations, add a short terminology section and then use terms consistently.
 
 For idea generation, final answers should lead with the top candidate ideas and the first kill test for each. For single-idea triage, name the preliminary verdict, main reason, and next lowest-cost action. For Full Gate, also include the Decision Memo and PDF paths.
+
+For Chinese idea cards, Idea Sprint artifacts, Direction artifacts, and Decision Memos, apply `report-style-auditor` before final delivery. If the artifact is written to disk, run `check_report_style.py` and `check_ai_style.py`; if it is only answered in chat, still follow the same style rules manually.

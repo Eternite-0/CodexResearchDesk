@@ -21,6 +21,19 @@ When evaluating a research direction or idea:
 4. Confidence expression: use `high`, `medium`, or `low`. Give percentages only when supported by explicit data.
 5. Self-audit before finalizing: check topic fit, factual accuracy, and whether the logic chain closes.
 
+## Subagent Evidence Discipline
+
+For complex idea discovery or broad early-stage research, split work into evidence packets instead of loading all papers, repos, and webpages into the main agent context.
+
+- Main Agent owns decomposition, candidate idea synthesis, promote/narrow/drop decisions, and final user-facing answer.
+- Subagents only answer bounded evidence questions and write `Evidence Packet` artifacts.
+- Subagents must not generate Decision Memos, design experiments, launch jobs, or decide final verdicts.
+- Subagents must not full-crawl repositories or paste long paper/README/source-code excerpts.
+- Each packet answers one question and should be 400-800 Chinese words plus compact tables.
+- Store packet artifacts under `projects/<project-slug>/evidence-packets/<run-slug>/`.
+- Use `templates/SUBAGENT_TASK_TEMPLATE.md` to assign work and `templates/EVIDENCE_PACKET_TEMPLATE.md` for outputs.
+- Main Agent should read packet summaries and the packet index first; open raw sources only for conflicts, missing critical evidence, or formal Decision Memo verification.
+
 ## Output Discipline
 
 - Use `##` section headers for research reports and Decision Memos.
@@ -56,9 +69,12 @@ Every research idea that may consume experiment resources must have:
 - `projects/<project-slug>/signals/<idea-slug>/paper_code.json` when paper-code scouting is used
 - `projects/<project-slug>/output/pdf/<idea-slug>_decision_memo.pdf`
 
-Idea Sprint artifacts, when used, belong under `projects/<project-slug>/idea-sprints/`.
+Idea Sprint artifacts, when written to disk, must have:
 
-Each research project owns its own `decisions/`, `signals/`, `idea-sprints/`, `research-wiki/`, `output/pdf/`, and `tmp/pdfs/` directories. Do not write multi-project work into root-level `decisions/`, `signals/`, `idea-sprints/`, `research-wiki/`, `output/`, or `tmp/` directories.
+- `projects/<project-slug>/idea-sprints/<sprint-slug>/IDEA_SPRINT.md`
+- `projects/<project-slug>/output/pdf/<sprint-slug>_idea_sprint.pdf`
+
+Each research project owns its own `decisions/`, `signals/`, `idea-sprints/`, `evidence-packets/`, `research-wiki/`, `output/pdf/`, and `tmp/pdfs/` directories. Do not write multi-project work into root-level `decisions/`, `signals/`, `idea-sprints/`, `evidence-packets/`, `research-wiki/`, `output/`, or `tmp/` directories.
 
 Allowed verdicts:
 
@@ -80,6 +96,12 @@ Advisor-facing artifacts must be delivered as Markdown plus PDF. Use:
 
 ```powershell
 python .\tools\render_markdown_pdf.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md --output .\projects\<project-slug>\output\pdf\<idea-slug>_decision_memo.pdf --preview --preview-dir .\projects\<project-slug>\tmp\pdfs
+```
+
+For Idea Sprint review packets, use:
+
+```powershell
+python .\tools\render_markdown_pdf.py .\projects\<project-slug>\idea-sprints\<sprint-slug>\IDEA_SPRINT.md --output .\projects\<project-slug>\output\pdf\<sprint-slug>_idea_sprint.pdf --preview --preview-dir .\projects\<project-slug>\tmp\pdfs
 ```
 
 Do not hand off Markdown-only unless the user explicitly asks.

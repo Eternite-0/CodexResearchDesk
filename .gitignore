@@ -12,6 +12,7 @@ env/
 projects/*/decisions/**
 projects/*/signals/**
 projects/*/idea-sprints/**
+projects/*/evidence-packets/**
 projects/*/research-wiki/**
 projects/*/output/**
 projects/*/tmp/**

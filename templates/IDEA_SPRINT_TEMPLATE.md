@@ -13,6 +13,16 @@
 | 外部信号 | [GitHub / alphaXiv / HN / HF / Reddit / X / 企业采用] | [判断热度、拥挤度、真实需求或 hype 风险] |
 | 领域痛点 | [实际未解决问题] | [避免为了组合而组合] |
 
+## Evidence Packets
+
+主 Agent 只汇总证据包，不把论文全文、README 全文或源码塞进上下文。
+
+| packet | 子任务 | 负责人 | 路径 | 对候选的影响 |
+|---|---|---|---|---|
+| [packet-slug] | [Seed Scan / Paper-Code Trace / External Signal / Pitfall Review] | [subagent / main-agent] | `projects/[project-slug]/evidence-packets/[run-slug]/[packet-slug].md` | [promote / static_precheck / narrow / drop] |
+
+**要求**：每个候选 idea 的 `seed evidence`、`traceability`、`hidden pitfall` 至少引用一个 packet。没有 packet 时，必须说明“未分块取证，本轮为轻量草案”。
+
 ## 候选 Idea 总表
 
 | 排名 | idea | 初步动作 | 为什么值得想 | 最大坑位 | 最低成本 kill test |
