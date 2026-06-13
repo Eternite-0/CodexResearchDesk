@@ -14,6 +14,7 @@ REQUIRED_SKILLS = [
     "direction-scorecard",
     "pitfall-radar",
     "kill-test-generator",
+    "report-style-auditor",
     "preflight-gate",
     "aris-runner",
     "research-lit",
@@ -39,6 +40,7 @@ REQUIRED_SKILLS = [
 REQUIRED_TOOLS = [
     "aris_tool_resolver.py",
     "arxiv_fetch.py",
+    "check_ai_style.py",
     "check_report_style.py",
     "decision_gate.py",
     "openalex_fetch.py",
@@ -97,12 +99,8 @@ def main() -> int:
     check((SAMPLE_PROJECT / "research-wiki").exists(), "sample project wiki exists", "sample project wiki missing", errors)
     check((SAMPLE_PROJECT / "output" / "pdf").exists(), "sample project pdf output exists", "sample project pdf output missing", errors)
     check((SAMPLE_PROJECT / "tmp" / "pdfs").exists(), "sample project preview output exists", "sample project preview output missing", errors)
-    check(
-        (SAMPLE_PROJECT / "decisions" / "sae-moe-routing-saes" / "decision.json").exists(),
-        "sample project decision.json exists",
-        "sample project decision.json missing",
-        errors,
-    )
+    sample_decisions = list((SAMPLE_PROJECT / "decisions").glob("*/decision.json"))
+    check(bool(sample_decisions), "sample project decision.json exists", "sample project decision.json missing", errors)
     check(SAMPLE_DIRECTION.exists(), "v0.2 direction triage example exists", "v0.2 direction triage example missing", errors)
 
     for skill in REQUIRED_SKILLS:

@@ -166,6 +166,7 @@ Codex App 会自动从以下目录发现仓库级 skills：
 | `$direction-scorecard` | 对方向按 7 个维度评分并给出推荐 verdict。 |
 | `$kill-test-generator` | 生成低成本 kill tests，优先找能否定方向的检查。 |
 | `$decision-memo` | 生成正式 Decision Memo、PDF 与 gate JSON。 |
+| `$report-style-auditor` | 交付前审计中文报告的英文模板残留、聊天残留、模糊归因和 AI 味套话。 |
 | `$preflight-gate` | 在实验、pilot、GPU 任务前执行硬阻断检查。 |
 | `$aris-runner` | 将具体任务路由到内置 ARIS Core 能力。 |
 
@@ -190,6 +191,7 @@ Codex App 会自动从以下目录发现仓库级 skills：
 | `tools/research_wiki.py` | 项目级研究记忆管理。 |
 | `tools/aris_tool_resolver.py` | 解析本地 ARIS skill / tool 路径。 |
 | `tools/arxiv_fetch.py` | arXiv 检索与下载辅助。 |
+| `tools/check_ai_style.py` | 中文报告 AI 味软门控，检查聊天残留、模糊归因、宣传腔和公式化表达。 |
 | `tools/openalex_fetch.py` | OpenAlex 学术图谱检索。 |
 | `tools/semantic_scholar_fetch.py` | Semantic Scholar 检索辅助。 |
 | `tools/threat_scan.py` | 对会重新进入 agent 上下文的 wiki 内容做注入风险扫描。 |
@@ -235,6 +237,13 @@ python -m pip install -r requirements.txt
 
 ```powershell
 python .\tools\self_check.py
+```
+
+交付前检查中文 Decision Memo：
+
+```powershell
+python .\tools\check_report_style.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md
+python .\tools\check_ai_style.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md
 ```
 
 在 Codex App 中评估一个研究想法：

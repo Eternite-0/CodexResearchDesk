@@ -81,6 +81,13 @@ Invoke or follow `decision-memo`. Write all project artifacts under `projects/<p
 
 Use `templates/DECISION_MEMO_TEMPLATE.md` as the required structure.
 
+Before rendering or delivering a Chinese Decision Memo, invoke or follow `report-style-auditor`, then run:
+
+```powershell
+python .\tools\check_report_style.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md
+python .\tools\check_ai_style.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md
+```
+
 ### 6. Gate Follow-Up Work
 
 Before experiment-like follow-up, run:

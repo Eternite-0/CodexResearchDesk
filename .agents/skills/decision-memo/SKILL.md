@@ -67,6 +67,7 @@ Keep English only for stable identifiers: paper titles, model names, dataset nam
 - Do not leave English boilerplate in Chinese reports. Translate section titles, table headers, list labels, action items, risk reasons, and prose.
 - In `decision.json`, keep machine keys and enum values in English, but write human-readable arrays such as `allowed_next_actions` and `blocking_reasons` in the report language.
 - Run `python .\tools\check_report_style.py <DECISION_MEMO.md>` before final delivery when the memo is in Chinese.
+- Run `python .\tools\check_ai_style.py <DECISION_MEMO.md>` before final delivery to catch chatbot residue, vague authority, and AI-flavored filler.
 
 ## JSON Contract
 

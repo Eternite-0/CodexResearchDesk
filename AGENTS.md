@@ -41,6 +41,7 @@ When evaluating a research direction or idea:
 
 ```powershell
 python .\tools\check_report_style.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md
+python .\tools\check_ai_style.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md
 ```
 
 ## Decision Gate
