@@ -52,14 +52,18 @@ Every research idea that may consume experiment resources must have:
 - `projects/<project-slug>/decisions/<idea-slug>/decision.json`
 - `projects/<project-slug>/signals/<idea-slug>/EXTERNAL_SIGNAL_LEDGER.md` when external signal scouting is used
 - `projects/<project-slug>/signals/<idea-slug>/external_signals.json` when external signal scouting is used
+- `projects/<project-slug>/signals/<idea-slug>/PAPER_CODE_LEDGER.md` when paper-code scouting is used
+- `projects/<project-slug>/signals/<idea-slug>/paper_code.json` when paper-code scouting is used
 - `projects/<project-slug>/output/pdf/<idea-slug>_decision_memo.pdf`
 
-Each research project owns its own `decisions/`, `signals/`, `research-wiki/`, `output/pdf/`, and `tmp/pdfs/` directories. Do not write multi-project work into root-level `decisions/`, `signals/`, `research-wiki/`, `output/`, or `tmp/` directories.
+Idea Sprint artifacts, when used, belong under `projects/<project-slug>/idea-sprints/`.
+
+Each research project owns its own `decisions/`, `signals/`, `idea-sprints/`, `research-wiki/`, `output/pdf/`, and `tmp/pdfs/` directories. Do not write multi-project work into root-level `decisions/`, `signals/`, `idea-sprints/`, `research-wiki/`, `output/`, or `tmp/` directories.
 
 Allowed verdicts:
 
 - `GO`: may enter experiments.
-- `STATIC_ONLY`: may run literature checks, static analysis, public checkpoint analysis, and non-training probes only.
+- `STATIC_ONLY`: may run literature checks, paper-code traceability checks, static analysis, public checkpoint analysis, and non-training probes only.
 - `NEEDS_MORE_EVIDENCE`: blocked until more evidence is gathered.
 - `NO_GO`: blocked.
 - `USER_OVERRIDE`: may proceed only when the user explicitly accepts the recorded risk.

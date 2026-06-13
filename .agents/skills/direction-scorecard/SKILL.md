@@ -20,7 +20,7 @@ Rate each dimension from 1 to 5:
 - 5: strong, direct, and well-supported.
 
 Compute `total_score` as `round(sum(scores) / 35 * 100)`.
-If an External Signal Ledger exists, include its score and risk flags as a separate soft-gate evidence section. Do not add it to the 7-dimension total score.
+If an External Signal Ledger or Paper Code Ledger exists, include its score and risk flags as a separate soft-gate evidence section. Do not add these signals mechanically to the 7-dimension total score.
 
 Required dimensions:
 
@@ -46,11 +46,12 @@ Use judgment, but stay conservative:
 
 ## Output
 
-Use `templates/DIRECTION_SCORECARD_TEMPLATE.md`. Include total score /100, external signal evidence when available, continue reasons, stop reasons, recommended verdict, and recommended next action.
+Use `templates/DIRECTION_SCORECARD_TEMPLATE.md`. Include total score /100, external signal evidence, paper-code traceability evidence when available, continue reasons, stop reasons, recommended verdict, and recommended next action.
 
 ## Guardrails
 
 - Do not treat a high score as permission to run experiments. A Decision Memo and gate must still authorize expensive work.
 - Do not treat GitHub stars, alphaXiv votes, or social media attention as proof that the research claim is true.
+- Do not treat a repository as paper evidence unless the paper title, arXiv ID, author page, Papers with Code, or README linkage is explicit.
 - Penalize unclear evaluation and unreproducible baselines heavily, even if the idea sounds novel.
 - Keep scoring auditable: every score needs a short reason.

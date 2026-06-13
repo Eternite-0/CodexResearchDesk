@@ -1,13 +1,13 @@
 ---
 name: research-desk
-description: "Codex app driven research decision workflow for evaluating research directions or ideas before experiments. Use when the user asks whether an idea is worth doing, asks for first-principles analysis, pre-experiment reasoning, go/no-go decisions, advisor-facing research judgment, or wants to route ARIS tools without launching experiments."
+description: "Codex app driven research workflow for generating, refining, and evaluating research ideas before experiments. Use when the user wants valuable idea directions, paper/repo-driven idea discovery, first-principles analysis, pitfall avoidance, pre-experiment reasoning, go/no-go decisions, advisor-facing research judgment, or ARIS tool routing without launching experiments."
 ---
 
 # Research Desk
 
 ## Purpose
 
-Run the top-level CodexResearchDesk workflow. Treat Codex app as the control surface and bundled ARIS skills/tools as the research engine. Do not launch experiments from this skill.
+Run the top-level CodexResearchDesk workflow. Treat Codex app as the control surface and bundled ARIS skills/tools as the research engine. The main job is to produce and refine valuable research ideas while avoiding predictable traps before experiments. Do not launch experiments from this skill.
 
 ## Operating Rule
 
@@ -22,7 +22,64 @@ Use Codex app available retrieval rather than binding the workflow to one extern
 - Use web search only when the current Codex environment provides it and the claim is unfamiliar, time-sensitive, or cannot be checked locally.
 - If evidence cannot be verified, mark it as missing or low-confidence instead of smoothing over the gap.
 
-## Workflow
+## Core Workflow
+
+Use one main workflow. Keep it light until a candidate idea actually deserves deeper triage:
+
+```text
+Seed Scan
+→ Idea Cards
+→ Evidence Probe
+→ Promote / Narrow / Drop
+→ Decision Memo only before expensive work
+```
+
+### 1. Seed Scan
+
+Collect only enough seeds to generate ideas:
+
+- papers and closest prior work.
+- associated code repositories.
+- benchmarks, datasets, traces, or metrics.
+- external signals such as GitHub, alphaXiv/HF Papers, HN, Reddit/X manual notes, and enterprise adoption.
+- field pain points or repeated failure modes.
+
+Do not crawl whole repositories or write long literature reviews at this stage.
+
+### 2. Idea Cards
+
+Turn seeds into a compact shortlist. Each card must include:
+
+- one-sentence research claim.
+- seed evidence.
+- mechanism or insight.
+- why it is not just paper A + paper B.
+- pitfall avoided.
+- likely hidden pitfall.
+- code/data/evaluation trace.
+- falsifier.
+- lowest-cost kill test.
+- action: `promote`, `static_precheck`, `narrow`, or `drop`.
+
+### 3. Evidence Probe
+
+Probe only the top one to three cards:
+
+- use `external-signal-scout` if heat, community attention, or enterprise adoption could change priority.
+- use `paper-code-scout` if the card depends on a paper's implementation or baseline.
+- use `pitfall-radar` if the failure modes are unclear.
+- use `kill-test-generator` if the next check needs concrete pass/fail conditions.
+- use `direction-scorecard` only when multiple promoted cards must be compared.
+
+Stop once the next useful action is clear.
+
+### 4. Formal Gate
+
+Use `decision-memo` and `preflight-gate` only when the next action might consume GPU, training time, pilot engineering, long-running jobs, or advisor-facing formal review.
+
+Full gate produces Markdown, PDF, and `decision.json`.
+
+## Detailed Procedure
 
 ### 1. Frame the Decision
 
@@ -46,19 +103,39 @@ Identify:
 - minimum publishable contribution if the claim holds
 - useful negative result if the claim fails
 
-### 3. Run Direction Triage When the Direction Is Still Broad
+### 3. Choose The Lightest Useful Evidence
 
-For early directions that are not ready for a full Decision Memo, use the v0.2 triage artifacts:
+For broad or early directions, do not run every tool by default. Use the smallest evidence purchase that can change the next decision:
 
-1. `direction-brief` to frame the one-sentence direction, core claim, evidence needs, risks, and preliminary verdict.
-2. `pitfall-radar` to identify data, metric, baseline, novelty, engineering, evaluation, and contribution traps.
-3. `external-signal-scout` to collect external soft-gate signals from GitHub, alphaXiv/HF Papers, Hacker News, Semantic Scholar/OpenAlex, and manual X/Reddit/enterprise evidence.
-4. `direction-scorecard` to score novelty, feasibility, data access, compute control, evaluation clarity, baseline reproducibility, and project value, using external signals as risk evidence rather than hard truth.
-5. `kill-test-generator` to define at least three low-cost tests before experiments.
+- If the user wants ideas, produce idea cards first.
+- If the idea depends on a paper's implementation, use `paper-code-scout`.
+- If public attention or adoption would affect priority, use `external-signal-scout`.
+- If the risks are unclear, use `pitfall-radar`.
+- If the next action needs pass/fail criteria, use `kill-test-generator`.
+- If multiple promoted cards must be compared, use `direction-scorecard`.
+- If the claim itself is blurry, use `direction-brief`.
 
 These artifacts help decide what not to do and what to validate first. They do not authorize GPU, training, pilots, or long-running jobs.
 
-### 4. Build Evidence With ARIS Core
+### 4. Produce Idea Cards Before Formal Artifacts
+
+When producing ideas, use this card format before any full Decision Memo:
+
+| Field | Required content |
+|---|---|
+| idea | concrete idea title, not a slogan |
+| core claim | one falsifiable claim |
+| seed evidence | papers/repos/signals that motivated it |
+| why not A+B | the non-trivial mechanism, problem reframing, or evaluation angle |
+| avoided pitfall | the known failure mode it tries to dodge |
+| hidden pitfall | the most likely reason it still fails |
+| traceability | code/data/metric/baseline availability |
+| kill test | a 0-GPU or lowest-cost check |
+| action | `promote`, `static_precheck`, `narrow`, or `drop` |
+
+Promote only the top one to three candidates into deeper triage. Park the rest with explicit reasons instead of expanding every candidate.
+
+### 5. Build Evidence With ARIS Core
 
 Use bundled ARIS capabilities only as tools for evidence:
 
@@ -70,14 +147,17 @@ Use bundled ARIS capabilities only as tools for evidence:
 
 When choosing an ARIS capability is non-obvious, use `aris-runner`.
 
-### 5. Produce a Decision Memo
+### 6. Produce a Decision Memo
 
 Invoke or follow `decision-memo`. Write all project artifacts under `projects/<project-slug>/`:
 
+- `projects/<project-slug>/idea-sprints/<sprint-slug>/IDEA_SPRINT.md` when Idea Sprint is written to disk
 - `projects/<project-slug>/decisions/<idea-slug>/DECISION_MEMO.md`
 - `projects/<project-slug>/decisions/<idea-slug>/decision.json`
 - `projects/<project-slug>/signals/<idea-slug>/EXTERNAL_SIGNAL_LEDGER.md` when external signal scouting was used
 - `projects/<project-slug>/signals/<idea-slug>/external_signals.json` when external signal scouting was used
+- `projects/<project-slug>/signals/<idea-slug>/PAPER_CODE_LEDGER.md` when paper-code scouting was used
+- `projects/<project-slug>/signals/<idea-slug>/paper_code.json` when paper-code scouting was used
 - `projects/<project-slug>/output/pdf/<idea-slug>_decision_memo.pdf`
 - `projects/<project-slug>/research-wiki/`
 - `projects/<project-slug>/tmp/pdfs/`
@@ -91,7 +171,7 @@ python .\tools\check_report_style.py .\projects\<project-slug>\decisions\<idea-s
 python .\tools\check_ai_style.py .\projects\<project-slug>\decisions\<idea-slug>\DECISION_MEMO.md
 ```
 
-### 6. Gate Follow-Up Work
+### 7. Gate Follow-Up Work
 
 Before experiment-like follow-up, run:
 
@@ -126,4 +206,4 @@ Use Markdown deliberately:
 - Do not mix English boilerplate into Chinese reports. Keep English only for stable identifiers such as model names, dataset names, paper titles, code paths, JSON keys, metric abbreviations, and gate enum values.
 - For unavoidable abbreviations, add a short terminology section and then use terms consistently.
 
-The final answer should name the verdict, the reason, the PDF path, and the next allowed action.
+For idea generation, final answers should lead with the top candidate ideas and the first kill test for each. For single-idea triage, name the preliminary verdict, main reason, and next lowest-cost action. For Full Gate, also include the Decision Memo and PDF paths.

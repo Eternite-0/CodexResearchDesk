@@ -199,6 +199,37 @@ class DecisionGateTests(unittest.TestCase):
             self.assertEqual(result.verdict, "INVALID")
             self.assertIn("external_signal_score", result.reason)
 
+    def test_paper_code_fields_are_soft_gate_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = write_decision(
+                Path(tmp),
+                "static-with-paper-code",
+                "STATIC_ONLY",
+                allowed_next_actions=["论文代码库追踪", "静态分析"],
+                paper_code_trace_score=7,
+                paper_code_summary="未发现官方代码库，只允许继续静态补证。",
+                paper_code_ledger="projects/test/signals/static-with-paper-code/PAPER_CODE_LEDGER.md",
+                code_availability_risk="high",
+            )
+            result = check_decision(path, mode="static")
+            self.assertTrue(result.allowed)
+            self.assertEqual(result.data["paper_code_trace_score"], 7)
+
+    def test_paper_code_score_must_be_in_range(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = write_decision(
+                Path(tmp),
+                "bad-paper-code-score",
+                "STATIC_ONLY",
+                allowed_next_actions=["静态分析"],
+                paper_code_trace_score=-1,
+                code_availability_risk="medium",
+            )
+            result = check_decision(path, mode="static")
+            self.assertFalse(result.allowed)
+            self.assertEqual(result.verdict, "INVALID")
+            self.assertIn("paper_code_trace_score", result.reason)
+
     def test_user_override_requires_flag_and_reason(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             path = write_decision(Path(tmp), "override", "USER_OVERRIDE", override_reason="user accepted risk")

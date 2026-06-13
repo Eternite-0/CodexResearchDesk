@@ -168,6 +168,12 @@ def validate_decision(data: dict[str, Any]) -> list[str]:
         errors.append("external_signal_ledger must be a string")
     if "hype_risk" in data and data["hype_risk"] not in ALLOWED_RISK_LEVELS:
         errors.append("hype_risk must be one of low, medium, high")
+    if "paper_code_summary" in data and not isinstance(data["paper_code_summary"], str):
+        errors.append("paper_code_summary must be a string")
+    if "paper_code_ledger" in data and not isinstance(data["paper_code_ledger"], str):
+        errors.append("paper_code_ledger must be a string")
+    if "code_availability_risk" in data and data["code_availability_risk"] not in ALLOWED_RISK_LEVELS:
+        errors.append("code_availability_risk must be one of low, medium, high")
     if "risk_level" in data and data["risk_level"] not in ALLOWED_RISK_LEVELS:
         errors.append("risk_level must be one of low, medium, high")
     if "direction_score" in data:
@@ -184,6 +190,13 @@ def validate_decision(data: dict[str, Any]) -> list[str]:
                 errors.append("external_signal_score must be between 0 and 100")
         except (TypeError, ValueError):
             errors.append("external_signal_score must be numeric")
+    if "paper_code_trace_score" in data:
+        try:
+            score = float(data["paper_code_trace_score"])
+            if score < 0 or score > 100:
+                errors.append("paper_code_trace_score must be between 0 and 100")
+        except (TypeError, ValueError):
+            errors.append("paper_code_trace_score must be numeric")
     if "max_gpu_hours_allowed" in data:
         try:
             max_gpu_hours = float(data["max_gpu_hours_allowed"])

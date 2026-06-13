@@ -14,6 +14,7 @@ REQUIRED_SKILLS = [
     "direction-scorecard",
     "pitfall-radar",
     "external-signal-scout",
+    "paper-code-scout",
     "kill-test-generator",
     "report-style-auditor",
     "preflight-gate",
@@ -45,6 +46,7 @@ REQUIRED_TOOLS = [
     "check_report_style.py",
     "decision_gate.py",
     "external_signal_fetch.py",
+    "paper_code_fetch.py",
     "openalex_fetch.py",
     "render_markdown_pdf.py",
     "research_wiki.py",
@@ -55,6 +57,7 @@ REQUIRED_TOOLS = [
 REQUIRED_TEMPLATES = [
     "DECISION_MEMO_TEMPLATE.md",
     "RESEARCH_BRIEF_TEMPLATE.md",
+    "IDEA_SPRINT_TEMPLATE.md",
     "DIRECTION_BRIEF_TEMPLATE.md",
     "DIRECTION_SCORECARD_TEMPLATE.md",
     "PITFALL_RADAR_TEMPLATE.md",

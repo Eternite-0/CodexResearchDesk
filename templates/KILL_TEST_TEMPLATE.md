@@ -13,7 +13,7 @@
 
 | test name | hypothesis | expected cost | pass condition | fail condition | decision change if failed |
 |---|---|---|---|---|---|
-| [测试 1，快速否定测试] | [待检验假设] | [小时/API/GPU，默认 0 GPU] | [通过条件] | [失败条件] | [停止 / 收窄 / 回到查新] |
+| 论文到代码库追踪 | [关键论文存在可追踪、可静态审计的代码入口] | [小时/API，0 GPU] | [官方链接或 README 命中 arXiv/标题，且有 install/eval/data 或 checkpoint 入口] | [无仓库、code coming soon、仓库与论文不匹配、缺 eval/data/checkpoint] | [停止 / 收窄 / 回到查新] |
 | [测试 2] | [待检验假设] | [小时/API/GPU，默认 0 GPU] | [通过条件] | [失败条件] | [停止 / 收窄 / 回到查新] |
 | [测试 3] | [待检验假设] | [小时/API/GPU，默认 0 GPU] | [通过条件] | [失败条件] | [停止 / 收窄 / 回到查新] |
 

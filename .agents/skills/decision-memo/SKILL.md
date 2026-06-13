@@ -17,6 +17,8 @@ For project slug `<project-slug>` and idea slug `<idea-slug>`, write:
 - `projects/<project-slug>/decisions/<idea-slug>/decision.json`
 - `projects/<project-slug>/signals/<idea-slug>/EXTERNAL_SIGNAL_LEDGER.md` when external signal scouting was used
 - `projects/<project-slug>/signals/<idea-slug>/external_signals.json` when external signal scouting was used
+- `projects/<project-slug>/signals/<idea-slug>/PAPER_CODE_LEDGER.md` when paper-code scouting was used
+- `projects/<project-slug>/signals/<idea-slug>/paper_code.json` when paper-code scouting was used
 - `projects/<project-slug>/output/pdf/<idea-slug>_decision_memo.pdf`
 - `projects/<project-slug>/tmp/pdfs/`
 
@@ -52,11 +54,13 @@ For Chinese memos, include every section below with Chinese headings:
 4. 一阶拆解。
 5. 多视角判断, from 导师视角、资源管理视角、审稿人质疑视角.
 6. 证据台账, with 支持、反对、相邻、缺失 evidence.
-7. 批判性评估, including 优势、弱点与风险、失败模式.
-8. 最低成本淘汰测试。
-9. 资源预算。
-10. 最终门控 JSON block.
-11. 自我审计, covering topic fit, factual accuracy, logic closure, and overclaim check.
+7. 外部信号账本, when used.
+8. 论文到代码库追踪, when relevant papers drive the idea.
+9. 批判性评估, including 优势、弱点与风险、失败模式.
+10. 最低成本淘汰测试。
+11. 资源预算。
+12. 最终门控 JSON block.
+13. 自我审计, covering topic fit, factual accuracy, logic closure, and overclaim check.
 
 Keep English only for stable identifiers: paper titles, model names, dataset names, code paths, commands, JSON keys, metric abbreviations, and gate enum values such as `STATIC_ONLY`.
 
@@ -91,6 +95,10 @@ Keep English only for stable identifiers: paper titles, model names, dataset nam
   "external_signal_summary": "No external signal ledger was used.",
   "external_signal_ledger": "",
   "hype_risk": "low",
+  "paper_code_trace_score": 0,
+  "paper_code_summary": "No paper-code ledger was used.",
+  "paper_code_ledger": "",
+  "code_availability_risk": "low",
   "kill_tests": [
     {
       "test_name": "closest-prior-work check",

@@ -28,7 +28,9 @@ Prefer these cheap tests before experiments:
 
 - closest-prior-work overlap check.
 - public benchmark protocol audit.
+- paper-to-code traceability audit.
 - dataset accessibility and split audit.
+- repository install/evaluation entrypoint audit without training.
 - baseline reproduction feasibility check.
 - metric validity check.
 - public checkpoint or static output inspection.

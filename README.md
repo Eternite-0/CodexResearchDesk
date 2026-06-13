@@ -26,60 +26,52 @@
 
 CodexResearchDesk 不是自动生成论文的流水线，也不是“给一个 A+B idea 就开跑实验”的执行器。它是一个前置研究控制台：
 
-- **先筛 idea**：拆出核心 claim、必要条件、falsifier 和最低成本证据。
+- **先产 idea 再筛 idea**：从论文、代码库、外部信号和领域痛点中形成候选 idea cards，再拆出核心 claim、falsifier 和最低成本证据。
 - **先找坑**：检查数据、指标、基线、新意、工程、评价和论文贡献风险。
 - **先看外部信号**：用 GitHub、alphaXiv/HF Papers、HN、Semantic Scholar/OpenAlex 和手工社媒/企业信号判断方向是否只有 hype。
+- **先追论文代码**：从 arXiv、Papers with Code、alphaXiv 和 GitHub 反查论文对应代码库，做只读静态尽调。
 - **先做门控**：Decision Memo 和 `decision.json` 决定是否允许进入实验。
 
 核心原则：**实验是昂贵的信息购买；不能改变决策的实验，不值得运行。**
 
-## 工作流
+## 产 Idea 工作流
 
-默认链路：
+主线只有一条：先从材料里产出候选 idea cards，再只对少数候选补关键证据。不是每个候选都跑完整流程。
 
 ```text
-Idea
-→ Direction Brief
-→ Pitfall Radar
-→ External Signal Scout
-→ Direction Scorecard
-→ Kill Tests
-→ Decision Memo
-→ Decision Gate
-→ Static work / Experiments
+Seed Scan
+→ Idea Cards
+→ Evidence Probe
+→ Promote / Narrow / Drop
+→ Decision Memo only before expensive work
 ```
 
 ```mermaid
-flowchart LR
-    A["研究 idea"] --> B["$research-desk"]
-    B --> C["Direction Brief"]
-    C --> D["Pitfall Radar"]
-    D --> E["External Signal Scout"]
-    E --> F["Direction Scorecard"]
-    F --> G["Kill Tests"]
-    G --> H["Decision Memo"]
-    H --> I{"Decision Gate"}
-    B -.取证.-> J["ARIS Core"]
-    J -.证据.-> H
-    I -->|GO| K["实验规划 / 实验运行"]
-    I -->|STATIC_ONLY| L["文献补证 / 静态分析 / 非训练探针"]
-    I -->|NEEDS_MORE_EVIDENCE / NO_GO| M["阻断或收窄"]
+flowchart TD
+    A["论文 / 仓库 / 外部信号 / 领域痛点"] --> B["Seed Scan"]
+    B --> C["Idea Cards"]
+    C --> D["Evidence Probe"]
+    D --> E{"Promote / Narrow / Drop"}
+    E -->|promote| F["Direction Brief / Pitfall / Kill Tests"]
+    E -->|static_precheck| G["外部信号 / 论文代码追踪 / 静态补证"]
+    E -->|narrow or drop| H["暂缓或收窄"]
+    F --> I["Decision Memo only before expensive work"]
+    I --> J{"Decision Gate"}
 ```
 
-各阶段的默认成本：
+各步的作用：
 
 | 阶段 | 作用 | 默认成本 |
 |---|---|---:|
-| Direction Brief | 用 1-2 页收敛方向、claim、证据需求和初步 verdict。 | 0 GPU |
-| Pitfall Radar | 提前暴露数据、指标、基线、新意、工程、评价和贡献风险。 | 0 GPU |
-| External Signal Scout | 抓取外部软门控信号，判断是否只有热度、没有指标或工程支撑。 | 0 GPU |
-| Direction Scorecard | 用 7 个维度给方向打分，但外部热度不直接进入总分。 | 0 GPU |
-| Kill Tests | 设计最低成本淘汰测试，优先找能否定或收窄方向的检查。 | 默认 0 GPU |
-| Decision Memo | 形成导师可审阅的正式裁决和 gate JSON。 | 视 verdict 而定 |
+| Seed Scan | 轻扫论文、仓库、外部信号和领域痛点，只收集能产 idea 的种子。 | 0 GPU |
+| Idea Cards | 生成候选 idea，并强制写清 claim、非 A+B、避坑点、隐藏坑、falsifier。 | 0 GPU |
+| Evidence Probe | 只对前 1-3 个候选查关键外部信号、论文代码、指标或最低成本 kill test。 | 0 GPU |
+| Promote / Narrow / Drop | 明确哪些继续、哪些收窄、哪些放弃。 | 0 GPU |
+| Decision Memo | 只有下一步会消耗 GPU、训练、长任务或正式汇报时才生成。 | 视 verdict 而定 |
 
 ## 项目产物
 
-每个项目维护自己的目录，避免不同方向互相污染：
+每个项目维护自己的目录，避免不同方向互相污染。Quick Scan 可以只在对话中完成；下面这些文件只在进入 Standard Triage 或 Full Gate 时按需产生：
 
 ```text
 projects/<project-slug>/
@@ -89,6 +81,10 @@ projects/<project-slug>/
   signals/<idea-slug>/
     EXTERNAL_SIGNAL_LEDGER.md
     external_signals.json
+    PAPER_CODE_LEDGER.md
+    paper_code.json
+  idea-sprints/
+    IDEA_SPRINT.md
   research-wiki/
   output/pdf/
   tmp/pdfs/
@@ -100,6 +96,9 @@ projects/<project-slug>/
 - `decision.json`：机器可读 gate 状态。
 - `EXTERNAL_SIGNAL_LEDGER.md`：外部软门控账本。
 - `external_signals.json`：外部信号结构化数据。
+- `PAPER_CODE_LEDGER.md`：论文到代码库追踪账本。
+- `paper_code.json`：代码库静态尽调结构化数据。
+- `IDEA_SPRINT.md`：候选 idea cards 和避坑台账，按需生成。
 - `output/pdf/`：正式 PDF 交付物。
 - `research-wiki/`：项目级长期记忆。
 
@@ -117,10 +116,16 @@ python -m pip install -r requirements.txt
 python .\tools\self_check.py
 ```
 
-用 Codex App 评估一个 idea：
+用 Codex App 产出候选 idea：
 
 ```text
-Use $research-desk to evaluate whether SAE features can explain MoE expert routing before any GPU experiment.
+Use $research-desk to generate idea cards around SAE features and MoE expert routing. Start from papers, repos, external signals, and known field pitfalls. Do not create a Decision Memo.
+```
+
+如果已经有一个具体 idea，再让它只做单卡避坑：
+
+```text
+Use $research-desk to make one idea card for whether SAE features can explain MoE expert routing. Focus on why it is not A+B, hidden pitfalls, and the lowest-cost kill test. Do not create files.
 ```
 
 单独抓外部信号：
@@ -129,6 +134,16 @@ Use $research-desk to evaluate whether SAE features can explain MoE expert routi
 python .\tools\external_signal_fetch.py scout "AutoResearchClaw autonomous research" `
   --project sae-moe-interpretability `
   --idea signal-explicit-smoke `
+  --github-repo aiming-lab/AutoResearchClaw `
+  --arxiv-id 2605.20025
+```
+
+单独追踪论文代码库：
+
+```powershell
+python .\tools\paper_code_fetch.py scout "AutoResearchClaw autonomous research" `
+  --project sae-moe-interpretability `
+  --idea paper-code-smoke `
   --github-repo aiming-lab/AutoResearchClaw `
   --arxiv-id 2605.20025
 ```
@@ -157,6 +172,7 @@ Codex App 会从 `.agents/skills/` 发现仓库级 skills。
 | `$direction-brief` | 生成早期方向简报。 |
 | `$pitfall-radar` | 做 skeptical pre-mortem，提前找坑。 |
 | `$external-signal-scout` | 用公开外部信号暴露 hype、工程和指标风险。 |
+| `$paper-code-scout` | 根据论文反查代码库，做只读静态尽调并暴露后续复现风险。 |
 | `$direction-scorecard` | 按 7 个维度评分并给出推荐 verdict。 |
 | `$kill-test-generator` | 生成低成本淘汰测试。 |
 | `$decision-memo` | 生成正式 Decision Memo、PDF 和 gate JSON。 |
@@ -180,6 +196,7 @@ Codex App 会从 `.agents/skills/` 发现仓库级 skills。
 |---|---|
 | `tools/decision_gate.py` | 机械执行 go / no-go 检查。 |
 | `tools/external_signal_fetch.py` | 抓取外部软门控信号并生成项目级账本。 |
+| `tools/paper_code_fetch.py` | 从论文追踪代码库并生成项目级静态尽调账本。 |
 | `tools/render_markdown_pdf.py` | 中文友好的 Markdown 到 PDF 渲染。 |
 | `tools/research_wiki.py` | 项目级研究记忆管理。 |
 | `tools/arxiv_fetch.py` | arXiv 检索与下载。 |
@@ -189,6 +206,20 @@ Codex App 会从 `.agents/skills/` 发现仓库级 skills。
 | `tools/check_ai_style.py` | 检查聊天残留、模糊归因、宣传腔和公式化表达。 |
 | `tools/threat_scan.py` | 扫描会重新进入 agent 上下文的 wiki 内容。 |
 | `tools/self_check.py` | 检查仓库可移植性、依赖、skills 和路径泄漏。 |
+
+## Idea Card 输出口径
+
+Idea Card 不是头脑风暴列表。每个候选必须回答：
+
+- **core claim**：一句可证伪主张。
+- **seed evidence**：来自哪些论文、仓库、benchmark、外部信号或领域痛点。
+- **why not A+B**：非平凡机制、问题重构或评价角度是什么。
+- **pitfall avoided**：它主动避开什么已知死路。
+- **hidden pitfall**：最可能失败在哪里。
+- **traceability**：关键代码、数据、checkpoint、metric 或 eval 入口是否可追踪。
+- **lowest-cost kill test**：不用训练或最低成本就能改变决策的检查。
+
+默认只把 1-3 个候选推进到后续补证。
 
 ## Decision Gate
 
@@ -215,6 +246,10 @@ Codex App 会从 `.agents/skills/` 发现仓库级 skills。
   "external_signal_summary": "GitHub 有实现但缺少独立 benchmark，存在 hype 风险。",
   "external_signal_ledger": "projects/demo/signals/idea/EXTERNAL_SIGNAL_LEDGER.md",
   "hype_risk": "medium",
+  "paper_code_trace_score": 51,
+  "paper_code_summary": "发现候选仓库，但 README 未明确绑定 arXiv ID，且缺少 evaluation 入口。",
+  "paper_code_ledger": "projects/demo/signals/idea/PAPER_CODE_LEDGER.md",
+  "code_availability_risk": "medium",
   "kill_tests": [],
   "allowed_next_actions": ["文献查新", "静态分析"],
   "blocked_actions": ["GPU 训练"],
@@ -275,6 +310,7 @@ examples/vlm-explainable-open-set-anomaly/
 - **真实优先于动量**：弱 idea 不应被漂亮话包装。
 - **先定义 falsifier**：没有可否定条件，就不要急着设计实验。
 - **外部热度不是可信度**：GitHub stars、alphaXiv votes、社媒讨论只能暴露风险和优先级。
+- **代码可追踪不是复现成功**：官方仓库、README、license、eval 脚本和数据/权重链接只是早筛证据，不等于论文结果真实。
 - **先杀坑再开跑**：最低成本淘汰测试优先于 GPU pilot。
 - **门控必须可审计**：所有 expensive work 都必须由 Decision Memo 和 `decision.json` 放行。
 - **PDF 是正式交付物**：给导师、合作者或组会看的内容不应只停留在 Markdown。

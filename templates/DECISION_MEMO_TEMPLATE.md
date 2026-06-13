@@ -82,6 +82,20 @@
 | 企业或机构信号 | [企业、机构、产品、benchmark 或 leaderboard 采用] |
 | 暴露的坑 | [无指标、赛道拥挤、工程不可复现、只有 hype、A+B 风险等] |
 
+## 论文到代码库追踪
+
+**结论**：[论文到代码库追踪只判断代码是否可追踪、可静态审计、是否暴露后续复现风险；不要求当前复现论文]
+
+| 项目 | 判断 |
+|---|---|
+| paper_code_trace_score | [0-100；没有则写“未使用”] |
+| code_availability_risk | [low / medium / high] |
+| 账本路径 | `projects/[project-slug]/signals/[idea-slug]/PAPER_CODE_LEDGER.md` |
+| 论文到仓库关系 | [官方链接 / Papers with Code / arXiv 页面 / README 命中 arXiv ID 或标题 / 未确认] |
+| 最佳候选仓库 | [owner/repo；说明是否 official、是否能追溯到论文] |
+| 静态可审计性 | [install、data、checkpoint、config、evaluation、result table 是否存在] |
+| 暴露的坑 | [code coming soon、无 license、缺 eval、缺数据/权重、仓库与论文不匹配、unofficial 等] |
+
 ## 批判性评估
 
 ### 优势
@@ -139,6 +153,10 @@
   "external_signal_summary": "[外部信号摘要；如果未使用外部信号账本，写“未使用”]",
   "external_signal_ledger": "projects/[project-slug]/signals/[idea-slug]/EXTERNAL_SIGNAL_LEDGER.md",
   "hype_risk": "[low | medium | high]",
+  "paper_code_trace_score": 0,
+  "paper_code_summary": "[论文到代码库追踪摘要；如果未使用代码追踪账本，写“未使用”]",
+  "paper_code_ledger": "projects/[project-slug]/signals/[idea-slug]/PAPER_CODE_LEDGER.md",
+  "code_availability_risk": "[low | medium | high]",
   "kill_tests": [
     {
       "test_name": "[测试名]",
