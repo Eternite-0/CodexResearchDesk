@@ -1,0 +1,4 @@
+interface:
+  display_name: "Decision Memo"
+  short_description: "Create go/no-go research memos"
+  default_prompt: "Use $decision-memo to write a decision memo for this idea."

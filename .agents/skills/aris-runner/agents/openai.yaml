@@ -1,0 +1,4 @@
+interface:
+  display_name: "ARIS Runner"
+  short_description: "Route tasks to bundled ARIS capabilities"
+  default_prompt: "Use $aris-runner to select the right bundled ARIS tool for this task."

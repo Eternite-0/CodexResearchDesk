@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Desk"
+  short_description: "Codex-first research decision workflow"
+  default_prompt: "Use $research-desk to evaluate this research direction before any experiment."

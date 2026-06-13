@@ -1,0 +1,25 @@
+{
+  "idea_id": "sae-moe-routing-saes",
+  "project_id": "sae-moe-interpretability",
+  "title": "SAE Features as Static Probes for MoE Expert Routing",
+  "verdict": "STATIC_ONLY",
+  "confidence": "medium",
+  "max_gpu_hours_allowed": 0,
+  "allowed_next_actions": [
+    "literature review",
+    "public checkpoint analysis",
+    "static routing-feature association test",
+    "negative-control design"
+  ],
+  "blocking_reasons": [
+    "No direct evidence yet that SAE features explain routing beyond token/domain baselines",
+    "Training a new SAE or running a GPU pilot is premature before a static signal exists"
+  ],
+  "memo_md": "projects/sae-moe-interpretability/decisions/sae-moe-routing-saes/DECISION_MEMO.md",
+  "memo_pdf": "projects/sae-moe-interpretability/output/pdf/sae-moe-routing-saes_decision_memo.pdf",
+  "source_materials": [
+    "AutoResearch SAE/MoE literature review",
+    "bundled ARIS research-lit and novelty-check workflow design"
+  ],
+  "created_at": "2026-06-13T06:45:00Z"
+}

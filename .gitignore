@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+tmp/pdfs/*_thumb_*.png
+tmp/pdfs/*_contact_sheet.png
+output/pdf/*.pdf
+projects/*/tmp/pdfs/*_thumb_*.png
+projects/*/tmp/pdfs/*_contact_sheet.png
+projects/*/output/pdf/*.pdf
+*.log

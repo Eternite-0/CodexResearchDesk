@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preflight Gate"
+  short_description: "Block experiments without GO decisions"
+  default_prompt: "Use $preflight-gate to check whether this idea may enter experiments."

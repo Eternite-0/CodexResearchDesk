@@ -1,0 +1,6 @@
+reportlab
+pypdf
+pymupdf
+pillow
+requests
+PyYAML

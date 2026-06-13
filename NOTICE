@@ -1,0 +1,21 @@
+CodexResearchDesk includes code and skill content derived from:
+
+  Auto-claude-code-research-in-sleep
+  https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep
+
+The upstream project is licensed under the MIT License. A copy of the upstream
+license is included at `vendor/ARIS_LICENSE`.
+
+Bundled ARIS-derived materials include selected files under:
+
+- `.agents/skills/`
+- `tools/arxiv_fetch.py`
+- `tools/openalex_fetch.py`
+- `tools/semantic_scholar_fetch.py`
+- `tools/research_wiki.py`
+- `tools/render_markdown_pdf.py`
+- `tools/threat_scan.py`
+
+CodexResearchDesk changes the top-level workflow from an automated research
+pipeline to a Codex app driven research decision desk with a hard preflight
+gate before experiments.
