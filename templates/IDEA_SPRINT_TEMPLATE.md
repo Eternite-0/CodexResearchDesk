@@ -5,6 +5,12 @@
 日期：`[YYYY-MM-DD]`  
 范围：本文件只做想法生成和静态预检建议；不运行实验、不训练模型、不 clone 全量仓库、不写 Decision Memo。
 
+机械检查：如果本文涉及训练、微调、LoRA、adapter、merge、部署、量化或 benchmark 复现，交付前必须通过：
+
+```powershell
+python .\tools\check_research_gate.py .\projects\[project-slug]\idea-sprints\[sprint-slug]\IDEA_SPRINT.md
+```
+
 ## 先给结论
 
 **[用 1-3 句话说明本方向是否值得做，以及应该推进、收窄还是停止。]**
@@ -20,6 +26,22 @@
 ## 为什么不是走显而易见的路
 
 [用普通中文解释为什么不能只做 benchmark 冲榜、A+B 组合、再造 agent、复现已有论文、或直接开实验。指出当前真正的研究空位。]
+
+## 最可能错在哪里
+
+**[写一句最强反证：如果本方案最后失败，最可能是哪个前提错了。]**
+
+| 反证问题 | 当前证据 | 对方案的影响 |
+|---|---|---|
+| [例如：直接微调 instruct 是否效果差？] | [证据包 / issue / 缺失证据] | [drop / narrow / static_precheck] |
+| [例如：base 上训练的 adapter 能否安全迁移到 instruct？] | [证据] | [影响] |
+
+如果这是训练、微调、部署、量化、复现或合并类任务，必须说明：
+
+- 官方/工具链支持只算弱证据，不能单独支撑 `promote`。
+- 是否查过失败案例、issue、社区经验和 abnormal outputs。
+- 是否比较过 base vs instruct、direct vs merge/transfer、prompt-only vs training。
+- 是否有最小 A/B 或 0-GPU kill test。
 
 ## 证据来自哪里
 
@@ -50,6 +72,10 @@
 **避开的坑**：[它主动避开的已知死路。]
 
 **隐藏坑**：[最可能让它失败的原因。]
+
+**工程失败信号**：[如果适用，写 GitHub/HF/ModelScope issues、社区经验、失败日志、bad case；没有查到也要写“未充分查证”。]
+
+**路线分叉**：[如果适用，写 base vs instruct、direct tuning vs adapter merge、SFT vs preference、prompt-only vs training 的取舍。]
 
 **可追踪性**：[关键代码、数据、指标、baseline、trace 是否可得；不可得也要写。]
 

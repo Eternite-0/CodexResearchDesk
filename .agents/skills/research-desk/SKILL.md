@@ -22,6 +22,27 @@ Use Codex app available retrieval rather than binding the workflow to one extern
 - Use web search only when the current Codex environment provides it and the claim is unfamiliar, time-sensitive, or cannot be checked locally.
 - If evidence cannot be verified, mark it as missing or low-confidence instead of smoothing over the gap.
 
+## Evidence Quality Rule
+
+Do not treat "the tool supports this" as evidence that a research or engineering route works. Official docs, API compatibility, library examples, and framework release notes only prove that a path may run. They do not prove quality, stability, or recommended practice.
+
+For any method that involves fine-tuning, post-training, distillation, preference optimization, adapter merging, checkpoint conversion, quantization, deployment, or benchmark reproduction, the evidence stack must include at least one engineering-reality packet before a route can be promoted:
+
+- failure evidence: GitHub issues, Hugging Face discussions, ModelScope issues, framework issue trackers, forum posts, logs, bad outputs, or failed reproductions.
+- route comparison: base vs instruct, full vs adapter, SFT vs DPO/RL, direct tuning vs merge/transfer, quantized vs non-quantized.
+- compatibility checks: tokenizer, chat template, special tokens, embedding resize, layer names, target modules, rope/YARN config, generation parser, and merge semantics.
+- minimal A/B falsifier: the cheapest comparison that would disprove the proposed route.
+
+If this evidence is missing, use `static_precheck` or `narrow`, not `promote`.
+
+Before delivering a Chinese Idea Sprint, Direction artifact, or Decision Memo that mentions training, fine-tuning, LoRA, post-training, deployment, quantization, adapter merging, or benchmark reproduction, run the mechanical gate:
+
+```powershell
+python .\tools\check_research_gate.py <artifact.md>
+```
+
+If the gate fails, revise the evidence packets and artifact instead of explaining the failure away in prose.
+
 ## Core Workflow
 
 Use one main workflow. Keep it light until a candidate idea actually deserves deeper triage:
@@ -46,6 +67,8 @@ Use subagents for independent evidence slices such as:
 - External Signal: GitHub, alphaXiv/HF Papers, HN, OpenAlex/Semantic Scholar, and manual social/enterprise evidence.
 - Pitfall Review: likely data, metric, baseline, novelty, engineering, evaluation, and contribution traps.
 - Kill Test Design: 0-GPU checks with pass/fail conditions.
+- Engineering Failure Trace: issue trackers, community bad cases, failed fine-tunes, abnormal outputs, version incompatibilities, and repeated workaround patterns.
+- Route Split Trace: for model training or deployment, whether the real choice is base vs instruct, direct vs transfer, merge vs adapter stacking, or prompt-only vs post-training.
 
 Do not delegate the final synthesis. The main Agent must decide which ideas are promoted, narrowed, or dropped.
 
@@ -171,6 +194,13 @@ Identify:
 - minimum publishable contribution if the claim holds
 - useful negative result if the claim fails
 
+Also identify the most likely industry-practice trap:
+
+- What would practitioners do differently after failures?
+- Which obvious route might run but produce poor results?
+- What silent assumption would make the whole recommendation wrong?
+- What evidence would force a route change before experiments?
+
 ### 3. Choose The Lightest Useful Evidence
 
 For broad or early directions, do not run every tool by default. Use the smallest evidence purchase that can change the next decision:
@@ -184,6 +214,15 @@ For broad or early directions, do not run every tool by default. Use the smalles
 - If the claim itself is blurry, use `direction-brief`.
 
 These artifacts help decide what not to do and what to validate first. They do not authorize GPU, training, pilots, or long-running jobs.
+
+For model fine-tuning or post-training directions, do not stop at papers and official tool docs. Before recommending a route, create or require packets for:
+
+- **Direct-route failure check**: search for the exact model family plus "bad results", "failure", "输出异常", "效果差", "LoRA not working", "微调没效果", "SFT 退化", and framework-specific issue terms.
+- **Base/Instruct split check**: determine whether the model should be tuned from base, instruct, chat, reasoning, or non-thinking checkpoint; include known reasons why direct instruct tuning may fail.
+- **Adapter/merge compatibility check**: verify whether a LoRA or delta trained on one checkpoint can be merged, stacked, or transferred to another checkpoint; list tokenizer, embedding, architecture, and chat-template blockers.
+- **A/B kill test design**: define the smallest comparison among direct-instruct tuning, base tuning, base-to-instruct merge, prompt-only, and no-tune baseline.
+
+If any of these checks are missing, the next action is `static_precheck`; do not write "recommended training route" as if it were established.
 
 ### 4. Produce Idea Cards Before Formal Artifacts
 
@@ -257,6 +296,7 @@ python .\tools\check_ai_style.py .\projects\<project-slug>\decisions\<idea-slug>
 When writing a Chinese Idea Sprint artifact to disk, invoke or follow `report-style-auditor`, then run:
 
 ```powershell
+python .\tools\check_research_gate.py .\projects\<project-slug>\idea-sprints\<sprint-slug>\IDEA_SPRINT.md
 python .\tools\check_report_style.py .\projects\<project-slug>\idea-sprints\<sprint-slug>\IDEA_SPRINT.md
 python .\tools\check_ai_style.py .\projects\<project-slug>\idea-sprints\<sprint-slug>\IDEA_SPRINT.md
 ```

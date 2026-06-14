@@ -106,8 +106,11 @@ def update_link(root: Path, project: str, run: str, stage: str, extra: dict[str,
             link["future_start"] = config.get("future_start")
             link["future_end"] = config.get("future_end")
             link["sources"] = config.get("sources")
+            link["max_past"] = config.get("max_past")
+            link["max_future"] = config.get("max_future")
         except Exception as exc:  # pragma: no cover - status metadata only
             link["config_read_error"] = str(exc)
+    link["reproducibility"] = reproducibility_note(paths)
     if extra:
         link.update(extra)
     target = desk_link_path(project, run)
@@ -202,6 +205,51 @@ def ledger_summary(path: Path) -> dict[str, Any]:
     }
 
 
+def artifact_hashes(paths: dict[str, Path]) -> dict[str, dict[str, Any]]:
+    tracked = [
+        "config",
+        "past_corpus",
+        "historical_prompt",
+        "ideas_frozen",
+        "future_corpus",
+        "ledger",
+        "papers_cool_insights",
+        "papers_cool_triage_csv",
+        "papers_cool_triage_md",
+        "report",
+        "pdf",
+    ]
+    hashes: dict[str, dict[str, Any]] = {}
+    for key in tracked:
+        path = paths[key]
+        if not path.exists():
+            continue
+        item: dict[str, Any] = {
+            "path": str(path),
+            "sha256": sha256_file(path),
+            "bytes": path.stat().st_size,
+        }
+        if path.suffix.lower() in {".jsonl", ".csv", ".md"}:
+            item["non_empty_lines"] = count_lines(path)
+        hashes[key] = item
+    return hashes
+
+
+def reproducibility_note(paths: dict[str, Path]) -> dict[str, Any]:
+    return {
+        "deterministic_local_steps": [
+            "candidate ledger scoring sorts by lexical-overlap score and candidate rank",
+            "Papers.cool candidate selection groups by idea_id and sorts by match_score",
+            "artifact hashes are recorded for rerun comparison",
+        ],
+        "external_variability": [
+            "OpenAlex/Semantic Scholar/arXiv results can change over time",
+            "Papers.cool/Kimi auxiliary interpretations can change unless cached",
+        ],
+        "hashes": artifact_hashes(paths),
+    }
+
+
 def print_status(root: Path, project: str, run: str) -> None:
     paths = arena_paths(root, project, run)
     print(f"项目：{project}")
@@ -228,6 +276,14 @@ def print_status(root: Path, project: str, run: str) -> None:
             summary = ledger_summary(path)
             suffix = f" ({summary['reviewed_rows']}/{summary['rows']} 行已审)"
         print(f"{label}：{'OK' if path.exists() else 'MISSING'}  {path}{suffix}")
+    hashes = artifact_hashes(paths)
+    if hashes:
+        print("")
+        print("可复现指纹：")
+        for key in ["past_corpus", "ideas_frozen", "future_corpus", "ledger", "papers_cool_insights", "report"]:
+            item = hashes.get(key)
+            if item:
+                print(f"- {key}: {item['sha256'][:12]}... ({item['bytes']} bytes)")
     print("")
     if not paths["config"].exists():
         print("下一步：运行 prepare。")
